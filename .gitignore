@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Secrets
+.env
+.env.*
+*.key
+credentials.json
+
+# Data — raw API pulls are never committed
+research/data/*.csv
+research/data/*.xlsx
+research/data/*.json
+*.db
+*.sqlite3
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Local project state — kept out of the repo intentionally
+claude.md
