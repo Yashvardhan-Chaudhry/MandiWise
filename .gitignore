@@ -30,3 +30,8 @@ research/data/*.json
 
 # Local project state — kept out of the repo intentionally
 claude.md
+
+# Raw per-request partials from ceda_pull.py. Local scratch that makes an
+# interrupted backfill resumable; the assembled data/ceda_*.json files are
+# what actually carry the data, so there is nothing to share here.
+data/_ceda_cache/
