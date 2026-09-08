@@ -108,3 +108,13 @@ The feed provides state, district, market, commodity, variety, grade, date, and 
 ## Team
 
 Built as a Software Engineering group project at Thapar Institute of Engineering & Technology.
+
+## Transport backend
+
+The first transport implementation lives in [`backend/`](backend/README.md):
+FastAPI estimates, exact whole-vehicle selection, sourced route/rate configuration,
+and persisted coordinator-managed pools. See its README for local setup, a runnable
+synthetic demo and API integration. Real transport quotes require separately sourced
+rates and distances; the existing price datasets do not provide them.
+
+Dataset review: [`docs/TRANSPORT_DATA_REVIEW.md`](docs/TRANSPORT_DATA_REVIEW.md).

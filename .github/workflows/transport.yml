@@ -1,0 +1,36 @@
+name: Transport backend
+on:
+  push:
+    paths: ['backend/**', '.github/workflows/transport.yml']
+  pull_request:
+    paths: ['backend/**', '.github/workflows/transport.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: ci-test-only
+          POSTGRES_DB: mandiwise_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d mandiwise_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: '3.12'
+      - run: uv sync --frozen --extra test
+      - run: uv run ruff check src tests scripts migrations
+      - run: uv run pytest -q
+        env:
+          TEST_POSTGRES_URL: postgresql+psycopg://postgres:ci-test-only@localhost:5432/mandiwise_test
