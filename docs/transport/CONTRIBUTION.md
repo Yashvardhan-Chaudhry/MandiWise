@@ -1,8 +1,6 @@
-# Sarthak's transport and farmer-pooling contribution
+# Transport pooling system
 
-Contributor: **Sarthak Kaushik — [@TheSarthak08](https://github.com/TheSarthak08)**
-
-Review branch: **`sarthak/transport-pooling-portal`**
+Review branch: **`transport-pooling-system`**
 
 Prepared: **2026-09-16**
 
@@ -42,7 +40,7 @@ After the branch is published, fetch it and check it out in a clean working dire
 
 ```sh
 git fetch origin
-git switch --track origin/sarthak/transport-pooling-portal
+git switch --track origin/transport-pooling-system
 cd backend
 uv sync --frozen --extra test
 uv run ruff check src tests scripts migrations

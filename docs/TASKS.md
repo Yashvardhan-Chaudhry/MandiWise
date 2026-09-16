@@ -6,11 +6,11 @@ Build order follows claude.md's "Next steps": schema → engine → API → clie
 
 Format: `[ ] Task — claimed by: — what "done" looks like`
 
-## Contribution under review — Sarthak / transport
+## Contribution under review — transport pooling system
 
-Sarthak Kaushik (`@TheSarthak08`) has prepared the transport backend, exact vehicle
+The prepared contribution includes the transport backend, exact vehicle
 selection/cost split, saved pool lifecycle, calculator and farmer-connection prototype
-on `sarthak/transport-pooling-portal`. See
+on `transport-pooling-system`. See
 [`transport/CONTRIBUTION.md`](transport/CONTRIBUTION.md) for scope, setup and review checks.
 The existing stage checkboxes below are intentionally unchanged: branch implementation
 is not the same as team-reviewed integration or completion of the broader project tasks.

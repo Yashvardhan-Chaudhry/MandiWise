@@ -119,10 +119,9 @@ rates and distances; the existing price datasets do not provide them.
 
 Dataset review: [`docs/TRANSPORT_DATA_REVIEW.md`](docs/TRANSPORT_DATA_REVIEW.md).
 
-### Run Sarthak's transport and pooling prototype
+### Run the transport pooling system
 
-Contribution branch: `sarthak/transport-pooling-portal` · Contributor: **Sarthak Kaushik
-([@TheSarthak08](https://github.com/TheSarthak08))**. This is a transport-only prototype
+Contribution branch: `transport-pooling-system`. This is a transport-only prototype
 for team review, not a completed mandi-ranking product or a deployed farmer network.
 
 On Windows with Python 3.12 installed, double-click **`START_MANDIWISE.cmd`** at the
