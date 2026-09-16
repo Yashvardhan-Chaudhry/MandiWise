@@ -118,3 +118,43 @@ synthetic demo and API integration. Real transport quotes require separately sou
 rates and distances; the existing price datasets do not provide them.
 
 Dataset review: [`docs/TRANSPORT_DATA_REVIEW.md`](docs/TRANSPORT_DATA_REVIEW.md).
+
+### Run Sarthak's transport and pooling prototype
+
+Contribution branch: `sarthak/transport-pooling-portal` · Contributor: **Sarthak Kaushik
+([@TheSarthak08](https://github.com/TheSarthak08))**. This is a transport-only prototype
+for team review, not a completed mandi-ranking product or a deployed farmer network.
+
+On Windows with Python 3.12 installed, double-click **`START_MANDIWISE.cmd`** at the
+repository root. The first launch installs dependencies; keep its terminal open.
+
+- Calculator: <http://127.0.0.1:8001/demo> — editable vehicle types, cost comparison,
+  per-farmer shares and worked explanations.
+- Farmer portal: <http://127.0.0.1:8001/pooling> — accounts, trip discovery, join approval,
+  saved groups and approved-member chat. Use two accounts in separate browser sessions
+  to demonstrate the workflow.
+- [Demo walkthrough](docs/transport/DEMO_GUIDE.md)
+- [Developer setup and API](backend/README.md)
+- [Contribution scope and review checklist](docs/transport/CONTRIBUTION.md)
+- [Implementation details and security limits](docs/transport/DEVELOPMENT.md)
+
+### Repository map
+
+```text
+backend/
+  src/mandiwise_transport/   Python engine, API, database and portal
+    web/templates/          Calculator and pooling HTML
+    web/static/             Readable CSS and JavaScript
+  tests/                    Engine, API, portal and migration tests
+  migrations/               Versioned database schema changes
+  scripts/                  API demo client and dataset study
+  README.md                 Developer setup
+docs/transport/             Transport demo, handoff and implementation guides
+data/                       Existing shared market snapshots (unchanged)
+research/                   Existing project research (unchanged)
+START_MANDIWISE.cmd          Windows one-click launcher
+```
+
+Accounts and messages stay in a local, ignored database; **never commit databases,
+passwords, tokens or `.env` files**. Rates and distances are manually entered estimates.
+The portal needs hosting and additional security work before real public use.

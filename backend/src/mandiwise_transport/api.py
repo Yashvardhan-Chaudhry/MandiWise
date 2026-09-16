@@ -1,10 +1,12 @@
 import os
+from importlib.resources import files
 from typing import Annotated
 
 import jwt
 from fastapi import Depends, FastAPI, Query, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import select, text
 from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
@@ -14,6 +16,7 @@ from . import schemas as s
 from . import services as svc
 from .db import Location, Member, Pool, PoolEvent, RateCard, Route, User, database
 from .engine import TransportError, kg
+from .presentation import router as presentation_router
 
 bearer = HTTPBearer(auto_error=False)
 
@@ -31,11 +34,20 @@ def current_user(
     db: DB,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],
 ):
-    if not credentials or credentials.scheme.lower() != "bearer":
+    token = (
+        credentials.credentials if credentials and credentials.scheme.lower() == "bearer" else None
+    )
+    if not token and request.cookies.get("mandiwise_session"):
+        from .portal import check_origin
+
+        if request.method not in {"GET", "HEAD", "OPTIONS"}:
+            check_origin(request)
+        token = request.cookies["mandiwise_session"]
+    if not token:
         raise svc.DomainError("unauthenticated", "A bearer access token is required", 401)
     try:
         claims = jwt.decode(
-            credentials.credentials,
+            token,
             request.app.state.jwt_secret,
             algorithms=["HS256"],
             audience="mandiwise-transport",
@@ -95,6 +107,19 @@ def create_app(database_url=None, jwt_secret=None):
     )
     app.state.engine, app.state.sessions = database(database_url)
     app.state.jwt_secret = secret
+    app.mount(
+        "/assets",
+        StaticFiles(directory=str(files("mandiwise_transport").joinpath("web/static"))),
+        name="assets",
+    )
+    app.include_router(presentation_router)
+    from .portal import router as portal_router
+
+    app.include_router(portal_router)
+
+    @app.get("/", include_in_schema=False)
+    def home():
+        return RedirectResponse("/demo")
 
     @app.exception_handler(svc.DomainError)
     async def domain_error(request, exc):

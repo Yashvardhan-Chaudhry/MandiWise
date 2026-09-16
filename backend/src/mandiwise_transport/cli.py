@@ -1,4 +1,4 @@
-"""Local administrator utilities. No public account/token issuance endpoint."""
+"""Local administrator utilities; farmer self-registration lives in the portal."""
 
 import argparse
 import json

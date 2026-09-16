@@ -39,6 +39,7 @@ class RouteInput(Input):
 
 
 class VehicleInput(Input):
+    name: Text | None = None
     code: Annotated[str, Field(pattern=r"^[a-z][a-z0-9_-]{0,39}$")]
     capacity_quintals: Quantity
     base_cost_inr: Money

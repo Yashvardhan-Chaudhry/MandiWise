@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MandiWise · Transport calculator</title>
+    <link rel="stylesheet" href="/assets/calculator.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="brand"><span>M</span>MandiWise</div>
+        <div>
+          <a
+            href="/demo"
+            style="color: var(--green); margin-right: 16px"
+            aria-current="page"
+            >Calculator</a
+          ><a href="/pooling" style="color: var(--green)">Farmer pooling →</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <h1>What will the trip cost?</h1>
+      <p class="intro">
+        Compare travelling separately with sharing transport. Enter the load and
+        vehicle rates; see the cost, the vehicle choice and every farmer’s
+        share.
+      </p>
+      <div class="notice">
+        <strong>Classroom example.</strong> The starting rates and distance are
+        illustrative. Replace them with supplier quotes and a checked road
+        distance for a real estimate. Nothing is booked or saved.
+      </div>
+      <div class="layout">
+        <form id="calculator">
+          <section class="card">
+            <div class="step">01 / Your trip</div>
+            <h2>Where are you going?</h2>
+            <div class="grid2">
+              <div>
+                <label for="origin">Shared pickup point</label
+                ><input
+                  id="origin"
+                  maxlength="100"
+                  value="Village collection point"
+                  required
+                />
+              </div>
+              <div>
+                <label for="destination">Destination mandi</label
+                ><input
+                  id="destination"
+                  maxlength="100"
+                  value="Example mandi"
+                  required
+                />
+              </div>
+            </div>
+            <label for="distance">Road distance to the mandi (km)</label
+            ><input
+              id="distance"
+              type="number"
+              step="0.001"
+              min="0.001"
+              max="2000"
+              value="60"
+              required
+            />
+            <p class="help" style="margin-top: 8px">
+              Enter a checked distance. Typing a place name does not calculate a
+              route. All farmers start at this shared pickup point.
+            </p>
+          </section>
+          <section class="card">
+            <div class="step">02 / The load</div>
+            <h2>Who is sharing?</h2>
+            <p class="help">
+              1 quintal = 100 kg. Enter each farmer’s separately packed load.
+            </p>
+            <div class="preset" aria-label="Load an example">
+              <button type="button" data-preset="40">1 farmer · 40 q</button
+              ><button type="button" data-preset="40,40">
+                2 farmers · 80 q</button
+              ><button type="button" data-preset="40,40,40">
+                3 farmers · 120 q
+              </button>
+            </div>
+            <div id="farmers"></div>
+            <button type="button" id="add" class="smallbtn">
+              + Add a farmer
+            </button>
+          </section>
+          <section class="card">
+            <div class="step">03 / Vehicle rates</div>
+            <h2>What does a vehicle charge?</h2>
+            <p class="help">
+              Cost for one vehicle = fixed charge + (rate per km × road
+              distance). For a flat trip quote, enter it as the fixed charge and
+              set the km rate to zero.
+            </p>
+            <div id="vehicles"></div>
+            <button type="button" id="add-vehicle" class="smallbtn">
+              + Add a vehicle type
+            </button>
+            <p class="help">
+              Keep 1–12 vehicle types. Give each a name, capacity and price.
+              Starting rates are examples.
+            </p>
+          </section>
+          <button type="submit" class="primary" id="calculate">
+            Calculate transport cost →
+          </button>
+          <div class="subtle">Uses the MandiWise Python transport engine.</div>
+          <div id="error" role="alert" class="error" hidden></div>
+          <details class="guide">
+            <summary>Where do these numbers come from?</summary>
+            <ol>
+              <li><strong>Load:</strong> the farmer supplies the quantity.</li>
+              <li>
+                <strong>Distance:</strong> verify the road distance using a map
+                or a known route.
+              </li>
+              <li>
+                <strong>Capacity and rates:</strong> confirm them with the
+                transport provider. Include agreed return travel and extra
+                charges.
+              </li>
+            </ol>
+            <p class="help">
+              The project’s AGMARKNET/CEDA files contain crop prices and
+              historical arrivals. They do not contain truck rates, road
+              distances or available vehicles.
+            </p>
+          </details>
+        </form>
+        <div>
+          <div id="status" role="status" class="status" hidden>
+            Inputs changed. Calculate again to update the result.
+          </div>
+          <div id="empty" class="empty">
+            <div>
+              <div class="symbol" aria-hidden="true">↗</div>
+              <h2>Start with the example</h2>
+              <p>
+                Enter the farmers’ quantities and vehicle rates to compare
+                separate and shared transport.
+              </p>
+              <p class="help">
+                Press “Calculate transport cost” to see the answer and each
+                step.
+              </p>
+            </div>
+          </div>
+          <div id="result" hidden aria-live="polite">
+            <section class="card">
+              <button type="button" id="print" class="print">
+                Print result
+              </button>
+              <div class="step">Your result</div>
+              <h2 id="result-title"></h2>
+              <p id="trip-summary" class="help"></p>
+              <div class="metrics">
+                <div class="metric">
+                  <span>Travelling separately</span
+                  ><strong id="solo-total"></strong>
+                </div>
+                <div class="metric">
+                  <span>Shared transport</span
+                  ><strong id="pooled-total"></strong>
+                </div>
+                <div class="metric saving">
+                  <span>Group saves</span><strong id="saving-total"></strong>
+                </div>
+              </div>
+              <div class="recommendation">
+                <div class="eyebrow">Lowest-cost vehicle combination</div>
+                <strong id="fleet"></strong>
+                <p id="capacity"></p>
+              </div>
+              <div id="warning" class="notice" hidden></div>
+              <h3>What each farmer pays</h3>
+              <div class="tablewrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Farmer / load</th>
+                      <th>Alone</th>
+                      <th>Shared</th>
+                      <th>Saves</th>
+                    </tr>
+                  </thead>
+                  <tbody id="shares"></tbody>
+                </table>
+              </div>
+              <p class="help" style="margin-top: 10px">
+                Transport cost is split by quantity. Each farmer’s produce stays
+                separately identified.
+              </p>
+            </section>
+            <section class="card">
+              <div class="step">Show your working</div>
+              <h2>How we calculated it</h2>
+              <div id="working"></div>
+            </section>
+            <section class="card">
+              <div class="step">For your presentation</div>
+              <h2>Explain it in one minute</h2>
+              <ol class="explain" id="explanation"></ol>
+              <p class="limits">
+                This demonstrates transport cost estimation and cost splitting.
+                It does not book a truck, predict crop prices, calculate sale
+                profit or save a pool. Pickup collection costs are excluded.
+                Actual vehicle availability and lot compatibility need the
+                coordinator’s confirmation.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+      <footer>
+        MandiWise · Software Engineering project · The calculation runs on your
+        local backend.
+      </footer>
+    </main>
+    <script src="/assets/vehicles.js"></script>
+    <script src="/assets/calculator.js"></script>
+  </body>
+</html>

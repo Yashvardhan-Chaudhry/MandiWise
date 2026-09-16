@@ -22,6 +22,9 @@ mandiwise-transport = "mandiwise_transport.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+mandiwise_transport = ["web/templates/*.html", "web/static/*.js", "web/static/*.css"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

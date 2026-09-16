@@ -1,5 +1,16 @@
 # MandiWise transport backend
 
+**Want to operate or present the calculation?** Start with
+[the demo guide](../docs/transport/DEMO_GUIDE.md) and double-click `START_DEMO.cmd`.
+It opens a simple form with inputs, results and a worked explanation at
+`http://127.0.0.1:8001/demo`. The API setup below is for developers integrating the full backend.
+
+**New farmer portal:** `/pooling` provides account registration/sign-in, public trip
+discovery, join requests, organizer approval, saved cost shares and approved-member chat.
+The calculator now supports adding/removing 1–12 named vehicle types. See
+[development notes](../docs/transport/DEVELOPMENT.md) for access rules, migration and
+deployment limits. Run the latest Alembic migration for an existing full-backend database.
+
 Version 0.1: transport estimates and coordinator-managed pooling. Runs independently
 today and can be integrated into the future MandiWise API. It does not need a live
 government API call to serve a request.
@@ -31,7 +42,8 @@ uv run uvicorn mandiwise_transport.api:create_app --factory --host 127.0.0.1 --p
 ```
 
 Keep the secret stable between restarts if existing tokens should continue to work.
-There is no default secret and no unauthenticated signup/token endpoint. Never commit
+There is no default secret. The new portal has public farmer signup/password sign-in;
+it does not issue administrator permissions. Never commit
 your secret, tokens, database, or real transport contact details to Git.
 
 Pip alternative: `python -m venv .venv`, activate it, `python -m pip install -e '.[test]'`,
@@ -168,7 +180,8 @@ expiry, issue time and subject checks. Production needs your normal user onboard
 delivery, HTTPS, secret management, database backups and an API gateway request limit.
 No CORS origins are enabled by default; use a same-origin proxy or deliberately configure
 the actual frontend origin at integration time. Run schema migrations explicitly before
-starting the service; the server never creates tables implicitly.
+starting the full API service; `api:create_app` does not create tables implicitly.
+Only the local `presentation` launcher initializes its prototype SQLite tables.
 
 ## Verification
 

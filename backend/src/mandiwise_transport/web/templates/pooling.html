@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>MandiWise · Farmer pooling</title>
+    <link rel="stylesheet" href="/assets/pooling.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="brand"><span>M</span>MandiWise</div>
+        <div>
+          <a href="/demo">Calculator</a
+          ><a href="/pooling" aria-current="page">Farmer pooling</a>
+        </div>
+        <div id="identity">
+          <button id="signin">Sign in / Create account</button>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div id="notice" role="status" hidden></div>
+      <div id="error" class="error" role="alert" hidden></div>
+      <section id="browse">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">Farmer pooling / Travel together</div>
+            <h1>Same mandi.<br />Share the journey.</h1>
+            <p>
+              Find farmers travelling from a nearby collection point. Request a
+              place in their group, agree on the plan and share transport
+              costs—without mixing your produce.
+            </p>
+            <button id="post-open" class="primary">
+              + Post a pooling trip
+            </button>
+          </div>
+          <div class="steps">
+            <div><b>01</b> Find a trip going your way.</div>
+            <div><b>02</b> Add your load and request to join.</div>
+            <div><b>03</b> Once approved, chat and check your cost share.</div>
+            <div class="help">
+              No phone number is published. Names and trip details are visible
+              to people browsing.
+            </div>
+          </div>
+        </div>
+        <div class="notice">
+          Local project prototype. Trips and accounts are saved on this
+          computer. Other farmers need access to the same hosted server to
+          connect from their own devices. No truck is booked and no payment is
+          collected here.
+        </div>
+        <div class="toolbar">
+          <button id="discover" class="primary">Find a trip</button
+          ><button id="mine">My trips & requests</button
+          ><button id="refresh">Refresh</button>
+        </div>
+        <form id="search-form" class="card">
+          <div class="grid2">
+            <div>
+              <label for="search">Village, district, mandi or crop</label
+              ><input
+                id="search"
+                placeholder="e.g. Nashik or onion"
+                maxlength="160"
+              />
+            </div>
+            <div>
+              <label for="filter-date">Travel date (optional)</label
+              ><input id="filter-date" type="date" />
+            </div>
+          </div>
+          <button class="smallbtn" type="submit">Search trips</button>
+        </form>
+        <div class="row">
+          <h2 id="list-heading">Open pooling trips</h2>
+          <span id="count" class="help"></span>
+        </div>
+        <div id="trips" class="results"></div>
+        <button id="more" class="smallbtn" hidden>Load more trips</button>
+      </section>
+      <section id="post" hidden>
+        <button id="post-back">← Back to trips</button>
+        <h1 style="margin-top: 20px">Start a pooling group</h1>
+        <p class="muted">
+          You organize this trip. Your own load is included immediately; you
+          approve other farmers before they join the group.
+        </p>
+        <form id="post-form">
+          <div class="detailgrid">
+            <div>
+              <section class="card">
+                <div class="eyebrow">01 / Route & date</div>
+                <div class="grid2">
+                  <div>
+                    <label for="p-origin">Pickup village / town</label
+                    ><input id="p-origin" maxlength="160" required />
+                  </div>
+                  <div>
+                    <label for="p-destination">Destination mandi</label
+                    ><input id="p-destination" maxlength="160" required />
+                  </div>
+                  <div>
+                    <label for="p-state">State</label
+                    ><input id="p-state" maxlength="160" required />
+                  </div>
+                  <div>
+                    <label for="p-district">District / route area</label
+                    ><input id="p-district" maxlength="160" required />
+                  </div>
+                  <div>
+                    <label for="p-date">Travel date</label
+                    ><input id="p-date" type="date" required />
+                  </div>
+                  <div>
+                    <label for="p-distance">Checked road distance (km)</label
+                    ><input
+                      id="p-distance"
+                      type="number"
+                      min="0.001"
+                      max="2000"
+                      step="0.001"
+                      required
+                    />
+                  </div>
+                </div>
+                <label for="p-pickup">Public meeting point</label
+                ><input
+                  id="p-pickup"
+                  maxlength="500"
+                  placeholder="e.g. village collection centre—not your home address"
+                  required
+                />
+                <p class="help">
+                  Confirm precise timing and loading details in the approved
+                  group chat. Distance is entered manually, not calculated from
+                  the place names.
+                </p>
+              </section>
+              <section class="card">
+                <div class="eyebrow">02 / Crop & your lot</div>
+                <div class="grid2">
+                  <div>
+                    <label for="p-crop">Crop / commodity</label
+                    ><input id="p-crop" maxlength="160" required />
+                  </div>
+                  <div>
+                    <label for="p-max">Maximum group load (quintals)</label
+                    ><input
+                      id="p-max"
+                      type="number"
+                      min="0.01"
+                      max="1000"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                </div>
+                <div id="own-lot"></div>
+                <p class="help">
+                  The group's load limit is separate from a vehicle's capacity.
+                  The calculator can recommend multiple vehicles.
+                </p>
+              </section>
+            </div>
+            <div>
+              <section class="card">
+                <div class="eyebrow">03 / Transport estimate</div>
+                <h2>Vehicle options</h2>
+                <p class="help">
+                  Replace these example rates with a supplier's quote before
+                  posting. Per vehicle: fixed charge + (km rate × distance).
+                </p>
+                <div id="portal-vehicles"></div>
+                <button id="portal-add-vehicle" type="button" class="smallbtn">
+                  + Add a vehicle type</button
+                ><label
+                  ><input
+                    id="rates-confirmed"
+                    type="checkbox"
+                    style="width: auto"
+                    required
+                  />
+                  I have checked the entered route and rates. I understand this
+                  is an estimate, not a booking.</label
+                >
+              </section>
+              <button class="primary" type="submit" id="post-submit">
+                Publish trip & include my load
+              </button>
+              <p class="help">
+                Your name, meeting point, crop and rates will be visible in trip
+                discovery.
+              </p>
+            </div>
+          </div>
+        </form>
+      </section>
+      <section id="detail" hidden>
+        <div class="toolbar">
+          <button id="detail-back">← Back to trips</button
+          ><button id="detail-refresh">Refresh trip</button>
+        </div>
+        <div id="trip-heading"></div>
+        <div class="detailgrid">
+          <div>
+            <section class="card" id="trip-info"></section>
+            <section class="card" id="membership"></section>
+            <section class="card" id="quote">
+              <h2>Transport cost estimate</h2>
+              <div id="quote-content"></div>
+            </section>
+          </div>
+          <div>
+            <section class="card" id="manage" hidden>
+              <h2>Organizer controls</h2>
+              <p class="help">
+                Review every pending request and confirm compatible lots.
+                Locking fixes the cost split and closes new requests.
+              </p>
+              <div id="manage-controls"></div>
+            </section>
+            <section class="card">
+              <div class="row">
+                <h2>Group chat</h2>
+                <button id="chat-refresh" class="smallbtn">Refresh chat</button>
+              </div>
+              <p class="help">
+                Only the organizer and approved farmers can read or send
+                messages. Never share passwords, payment codes or sensitive
+                documents.
+              </p>
+              <div id="chat-locked" class="notice">
+                Sign in and get your join request approved to use this group's
+                chat.
+              </div>
+              <div id="chat-open" hidden>
+                <div id="messages"></div>
+                <form id="chat-form">
+                  <label for="message">Message to the group</label
+                  ><textarea
+                    id="message"
+                    maxlength="1000"
+                    rows="3"
+                    required
+                    placeholder="Agree on the pickup time and loading plan…"
+                  ></textarea
+                  ><button class="primary smallbtn">Send message</button>
+                </form>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+      <footer>
+        MandiWise · Cost shares are proportional to load. Each lot keeps its
+        farmer, variety, grade and condition. Organizer names are self-declared,
+        not verified identities.
+      </footer>
+    </main>
+    <dialog id="auth">
+      <div class="row">
+        <h2 id="auth-title">Sign in</h2>
+        <button id="auth-close" aria-label="Close sign in">×</button>
+      </div>
+      <p class="help">
+        Use your own account. For a two-farmer classroom demo, use a normal
+        browser window and a private/incognito window.
+      </p>
+      <form id="auth-form">
+        <div id="registration" hidden>
+          <label for="a-name">Your display name</label
+          ><input id="a-name" maxlength="160" /><label for="a-village"
+            >Village / town</label
+          ><input id="a-village" maxlength="160" />
+        </div>
+        <label for="a-user">Username</label
+        ><input
+          id="a-user"
+          pattern="[a-z0-9_]{3,40}"
+          maxlength="40"
+          autocomplete="username"
+          required
+        />
+        <p class="help">3–40 lowercase letters, digits or underscores.</p>
+        <label for="a-password">Password</label
+        ><input
+          id="a-password"
+          type="password"
+          maxlength="128"
+          autocomplete="current-password"
+          required
+        />
+        <p class="help" id="password-help">
+          New accounts need at least 15 characters. A memorable sentence works.
+        </p>
+        <div id="auth-error" class="error" role="alert" hidden></div>
+        <button class="primary" id="auth-submit">Sign in</button
+        ><button type="button" id="auth-toggle">
+          Create an account instead
+        </button>
+      </form>
+    </dialog>
+    <script src="/assets/vehicles.js"></script>
+    <script src="/assets/pooling.js"></script>
+  </body>
+</html>

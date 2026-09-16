@@ -1,0 +1,54 @@
+MANDIWISE - TRANSPORT CALCULATOR + FARMER POOLING
+
+1. Extract this ZIP completely.
+2. Double-click START_MANDIWISE.cmd in the extracted folder.
+3. Wait for your browser, then click Calculate transport cost.
+
+Python 3.12 is needed. The first launch installs the Python packages.
+Keep the terminal window open while presenting. Press Ctrl+C to stop.
+
+The page opens at http://127.0.0.1:8001/demo
+Click Farmer pooling in the top navigation for the new portal:
+http://127.0.0.1:8001/pooling
+
+NEW: Add or remove vehicle types in Step 03 of the calculator.
+Enter each vehicle's name, capacity, fixed charge and per-km rate.
+
+POOLING WALKTHROUGH:
+1. Create an account (username + password of at least 15 characters).
+2. Click Post a pooling trip. Enter the route, date, crop, your load and rates.
+3. A second farmer uses a DIFFERENT account in a private/incognito browser window.
+4. That farmer finds the trip and clicks Request to join with their own lot details.
+5. The organizer refreshes the trip and clicks Approve load.
+6. Both farmers refresh to see their cost shares and use Group chat.
+7. The organizer can lock the agreed group, record dispatch and mark it settled.
+
+No fake farmers are preloaded: the first trip list is empty until you post a trip.
+Records are saved in backend/portal.db. Keep this file and folder to retain them.
+Restarting the local launcher requires signing in again; records remain saved.
+Use Refresh trip / Refresh chat for updates (not automatic live notifications).
+The portal is local to your PC. It must be hosted before remote farmers can connect.
+Do not post home addresses, payment codes or other sensitive information.
+
+If upgrading: stop the old demo with Ctrl+C before starting this version.
+Extract into a new folder. To retain existing portal records, copy portal.db from
+the previous backend folder while both servers are stopped. Do not overwrite it
+with a blank database. This ZIP contains no accounts, passwords or databases.
+
+The form contains:
+- Shared pickup point and destination labels
+- Road distance in kilometres
+- Each farmer's load in quintals (1 quintal = 100 kg)
+- Vehicle capacities and prices
+
+The result shows:
+- The cheapest sufficient vehicle combination
+- The cost of travelling separately and together
+- Each farmer's share and savings
+- Every calculation in plain language
+- A one-minute explanation for your professor
+
+All prefilled figures are illustrative classroom inputs. They are not real supplier quotes.
+
+See docs/transport/DEMO_GUIDE.md for the presentation guide.
+See backend/README.md for developer setup of the full authenticated backend.

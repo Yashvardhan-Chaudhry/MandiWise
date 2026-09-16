@@ -22,12 +22,19 @@ research/data/*.xlsx
 research/data/*.json
 *.db
 *.sqlite3
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db-journal
 *.db-shm
 *.db-wal
 .pytest_cache/
 .ruff_cache/
 .coverage
 htmlcov/
+build/
+*.whl
+*.zip
 
 # OS/editor
 .DS_Store

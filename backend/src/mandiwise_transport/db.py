@@ -40,6 +40,23 @@ class User(Base):
     __table_args__ = (CheckConstraint("role IN ('farmer','coordinator','admin')"),)
 
 
+class PortalAccount(Base):
+    __tablename__ = "transport_portal_accounts"
+    user_id: Mapped[str] = mapped_column(ForeignKey(User.id), primary_key=True)
+    username: Mapped[str] = mapped_column(String(40), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(250))
+    village: Mapped[str] = mapped_column(String(160))
+
+
+class PortalMessage(Base):
+    __tablename__ = "transport_portal_messages"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    pool_id: Mapped[str] = mapped_column(ForeignKey("transport_pools.id"), index=True)
+    author_id: Mapped[str] = mapped_column(ForeignKey(User.id))
+    body: Mapped[str] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
 class Location(Base):
     __tablename__ = "transport_locations"
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
