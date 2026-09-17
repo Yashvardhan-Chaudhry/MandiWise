@@ -148,11 +148,21 @@ def _parse_date(text):
 def load_snapshots():
     if not os.path.isdir(DATA_DIR):
         sys.exit("No %s/ directory. Run 'pull' first." % DATA_DIR)
-    rows, files = [], sorted(os.listdir(DATA_DIR))
-    for name in files:
-        if name.endswith(".json"):
-            with open(os.path.join(DATA_DIR, name)) as fh:
-                rows += json.load(fh)
+    rows, files = [], []
+    for name in sorted(os.listdir(DATA_DIR)):
+        if not name.endswith(".json"):
+            continue
+        with open(os.path.join(DATA_DIR, name), encoding="utf-8") as fh:
+            payload = json.load(fh)
+        # data/ is shared -- it also holds config like vehicle_rates.json.
+        # A snapshot is a list of row dicts; anything else is somebody else's
+        # file and is skipped out loud rather than silently mangled.
+        if not isinstance(payload, list) or not all(
+                isinstance(r, dict) for r in payload):
+            print("  skipping %s (not a price snapshot)" % name)
+            continue
+        files.append(name)
+        rows += payload
 
     # data.gov.in snapshots and CEDA backfills can cover the same reading.
     # Dedupe so an overlapping day is not counted twice.
