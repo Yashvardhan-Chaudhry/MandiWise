@@ -104,6 +104,21 @@ tasks first. Line references are to the code as merged on 2026-09-17.
 
 - [ ] Re-run the transport data review over the full corpus — claimed by: — done looks like: `docs/TRANSPORT_DATA_REVIEW.md` reports counts computed over all 12 files now in `data/`, not the 5 that existed when it was written. The document has a dated scope note saying what it was computed over; that note comes out when the numbers are recomputed. Reproduce with `python scripts/study_data.py --data-dir ../data` from `backend/`; do not estimate or scale the old figures.
 
+## Internationalisation — added 2026-09-17
+
+Scope, verification policy, numerals and RTL are settled in `docs/DECISIONS.md` (2026-09-17). These
+tasks implement that decision; they do not re-open it. 13 locales: en, hi, pa, ur, mr, bn, gu, te,
+ta, kn, ml, or, as. Only en/hi/pa get populated catalogues — the other ten are declared and stubbed.
+
+- [ ] Locale registry + catalogue format — claimed by: — done looks like: one shared definition of the 13 locales (code, endonym, script, text direction) and a string-catalogue file format, usable by both the existing backend templates and the future React client, so adding a language is config rather than code
+- [ ] English/Hindi/Punjabi catalogues populated and human-checked — claimed by: — done looks like: every user-facing string in those three locales checked by someone who reads the language, with a written record of who checked which
+- [ ] Ten stub catalogues that fall back visibly — claimed by: — done looks like: ur, mr, bn, gu, te, ta, kn, ml, or, as are selectable but clearly marked as not yet translated, and untranslated strings fall back to English rather than rendering blank or as a raw key
+- [ ] RTL layout support — claimed by: — done looks like: the page carries the correct `dir` for the active locale and the layout mirrors properly in Urdu; verified by eye on a narrow screen, not just asserted
+- [ ] Latin numerals enforced across locales — claimed by: — done looks like: prices, quantities and distances render in Latin digits in every locale, including the Devanagari, Bengali and Perso-Arabic ones, with a test covering at least one non-Latin-script locale
+- [ ] Retrofit i18n into the existing backend UI — claimed by: — done looks like: `backend/src/mandiwise_transport/web/templates/*.html` and the static JS no longer hardcode `<html lang="en">` or English strings; this is the "i18n from the first commit" rule being repaired, so it should land before more UI is written
+- [ ] Commodity-name translation strategy — claimed by: — done looks like: a written decision on how commodity names are translated and verified, given `research/commodity_aliases.md` shows ~30% name disagreement between sources in English alone and the live feed carries mixed-script names; a wrong crop name costs a farmer real money, so this needs a plan before any non-English locale is marked available
+- [ ] Update `docs/ARCHITECTURE.md` §3.1 — claimed by: — done looks like: the line naming "Punjabi, Hindi, English" reflects the 13-locale decision, since `claude.md` requires discrepancies between documents to be fixed rather than worked around
+
 ---
 
 ## Notes
