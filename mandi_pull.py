@@ -27,7 +27,7 @@ import argparse
 import urllib.parse
 import urllib.request
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime, timedelta
 from statistics import median
 
 RESOURCE_ID = "9ef84268-d588-465a-a308-a864a43d0070"
@@ -43,6 +43,9 @@ REQUEST_PAUSE = 0.3
 # blow up dispersion ratios. This is a rejection, not a guess: see
 # docs/DECISIONS.md.
 PRICE_FLOOR = 50
+
+# claude.md's liquidity measure is defined over a trailing 30-day window.
+LIQUIDITY_WINDOW_DAYS = 30
 
 
 def load_dotenv(path=".env"):
@@ -132,6 +135,14 @@ def pull(state):
     if len(dates) == 1:
         print("Confirms: this endpoint carries a single day. Run this daily.")
     return rows
+
+
+def _parse_date(text):
+    """Rows carry DD/MM/YYYY (both sources are normalised to it)."""
+    try:
+        return datetime.strptime(text, "%d/%m/%Y").date()
+    except (TypeError, ValueError):
+        return None
 
 
 def load_snapshots():
@@ -237,25 +248,66 @@ def analyse(rows):
                 r["dispersion"] * 100, (r["cheapest"] or "")[:18], r["min"],
                 (r["dearest"] or "")[:18], r["max"]))
 
-    # ---- coverage ----
-    days = {r.get("arrival_date") for r in rows}
-    pairs = defaultdict(set)
+    # ---- liquidity: trailing 30-day window, per source ----
+    #
+    # claude.md specifies: "For each (mandi, commodity), count reporting days
+    # in a trailing 30-day window." An earlier version divided each pair's
+    # reporting days by every date in the corpus, which broke the moment the
+    # corpus held two sources covering different years -- pairs from the
+    # 2-day live feed scored ~0% against a 743-day denominator. The window is
+    # therefore anchored per source, and the denominator is the number of days
+    # the corpus actually observed inside that window, not a flat 30.
+    by_source = defaultdict(list)
     for r in rows:
-        pairs[(r.get("market"), r.get("commodity"))].add(r.get("arrival_date"))
+        by_source[r.get("source") or "data.gov.in"].append(r)
 
     print("\n" + "=" * 62)
-    print("REPORTING COVERAGE  (days observed: %d)" % len(days))
+    print("LIQUIDITY  (reporting days in a trailing %d-day window)"
+          % LIQUIDITY_WINDOW_DAYS)
     print("=" * 62)
-    if len(days) < 2:
-        print("Only one day captured. Coverage needs several days to mean "
-              "anything -- keep running 'pull' daily.")
-    else:
-        cov = sorted((len(d) / len(days) for d in pairs.values()))
-        print("Market-commodity pairs : %d" % len(cov))
-        print("Median coverage        : %.0f%%" % (median(cov) * 100))
-        print("Pairs reporting always : %d" %
-              sum(1 for c in cov if c == 1.0))
-        print("Pairs under 50%%        : %d" % sum(1 for c in cov if c < 0.5))
+
+    for src in sorted(by_source):
+        srows = by_source[src]
+        dates = {d for d in (_parse_date(r.get("arrival_date")) for r in srows)
+                 if d}
+        if not dates:
+            continue
+        anchor = max(dates)
+        start = anchor - timedelta(days=LIQUIDITY_WINDOW_DAYS - 1)
+        observed = sorted(d for d in dates if start <= d <= anchor)
+
+        pairs = defaultdict(set)
+        for r in srows:
+            d = _parse_date(r.get("arrival_date"))
+            if d and start <= d <= anchor:
+                pairs[(r.get("market"), r.get("commodity"))].add(d)
+
+        print("\nsource: %s   window %s .. %s"
+              % (src, start.isoformat(), anchor.isoformat()))
+        print("  days the corpus observed in this window: %d of %d"
+              % (len(observed), LIQUIDITY_WINDOW_DAYS))
+        if len(observed) < LIQUIDITY_WINDOW_DAYS:
+            print("  (a pair can report at most %d days here, so those are the"
+                  " denominator -- not %d)"
+                  % (len(observed), LIQUIDITY_WINDOW_DAYS))
+        if not pairs or len(observed) < 2:
+            print("  too few days to judge liquidity from this source yet.")
+            continue
+
+        counts = sorted(len(d) for d in pairs.values())
+        share = [c / len(observed) for c in counts]
+        print("  market-commodity pairs : %d" % len(counts))
+        print("  reporting days  median : %d   (25th %d, 75th %d)"
+              % (median(counts), counts[len(counts) // 4],
+                 counts[3 * len(counts) // 4]))
+        # Buckets are a provisional reading aid, not a sourced threshold.
+        active = sum(1 for x in share if x >= 0.6)
+        inter = sum(1 for x in share if 0.2 <= x < 0.6)
+        sparse = sum(1 for x in share if x < 0.2)
+        print("  active (>=60%% of observed days)   : %d" % active)
+        print("  intermittent (20-60%%)            : %d" % inter)
+        print("  sparse (<20%%, no reliable buyer) : %d" % sparse)
+        print("  NOTE: those 60/20 cut-offs are provisional, not sourced.")
 
     # ---- naming inconsistency, evidence for the normalisation layer ----
     odd = sorted({r.get("commodity") for r in rows

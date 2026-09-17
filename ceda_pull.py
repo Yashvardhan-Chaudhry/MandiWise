@@ -58,6 +58,11 @@ CACHE_SUBDIR = "_ceda_cache"
 # demonstrably do have data.
 EMPTY_RECHECK_PAUSE = 90
 
+# An unattended run spans hours, so transient network failures are expected
+# rather than exceptional. A previous overnight run died on a single
+# TimeoutError after the machine slept.
+NET_RETRIES = 5
+
 
 class RateLimited(Exception):
     def __init__(self, retry_after_s):
@@ -269,7 +274,10 @@ def _fetch_range(endpoint, state_id, district_id, commodity_id,
 
         # Wait out rate limits on THIS leaf rather than abandoning the
         # combination -- everything already fetched is on disk, so waiting is
-        # cheap and nothing is re-requested afterwards.
+        # cheap and nothing is re-requested afterwards. Transient network
+        # failures get the same treatment: an unattended overnight run must
+        # not die because the machine slept or the link dropped for a minute.
+        net_failures = 0
         while True:
             try:
                 rows, _ = _fetch_verified(endpoint, payload, pace)
@@ -280,6 +288,14 @@ def _fetch_range(endpoint, state_id, district_id, commodity_id,
                 print("    rate limited, waiting %ds (%s..%s)"
                       % (rl.retry_after_s, start, end))
                 time.sleep(rl.retry_after_s)
+            except (urllib.error.URLError, TimeoutError, OSError) as exc:
+                net_failures += 1
+                if net_failures > NET_RETRIES:
+                    raise
+                wait = min(60 * net_failures, 300)
+                print("    network error (%s), retry %d/%d in %ds (%s..%s)"
+                      % (exc, net_failures, NET_RETRIES, wait, start, end))
+                time.sleep(wait)
 
         if len(rows) >= PAGE_CAP:
             with open(capped_marker, "w") as fh:
@@ -329,7 +345,7 @@ def backfill(state_id, districts, commodities, start, end, want_qty, max_wait,
     print("%d combination(s), %s to %s, pacing %ds between requests"
           % (len(combos), start, end, pace))
 
-    done = skipped = rows_total = 0
+    done = skipped = rows_total = failed = 0
     for i, (district_id, commodity_id) in enumerate(combos, 1):
         path = os.path.join(DATA_DIR, "ceda_%d_%d_%d_%s_%s.json"
                             % (state_id, district_id, commodity_id, start, end))
@@ -350,6 +366,13 @@ def backfill(state_id, districts, commodities, start, end, want_qty, max_wait,
             print("Every completed request is cached. Re-run the same command "
                   "later to resume -- it will not re-fetch what it already has.")
             break
+        except Exception as exc:
+            # One bad combination must not abandon the ones after it.
+            print("  FAILED %s: %s -- skipping to the next combination"
+                  % (label, exc), file=sys.stderr)
+            failed += 1
+            time.sleep(pace)
+            continue
 
         with open(path, "w") as fh:
             json.dump(rows, fh)
