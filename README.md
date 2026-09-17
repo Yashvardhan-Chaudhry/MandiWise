@@ -23,9 +23,25 @@ The Government of India publishes daily prices from every mandi in the country a
 | Transport | −₹3,000 | −₹9,000 |
 | **Net** | **₹41,880** | **₹42,792** |
 
-*Illustrative figures.*
+*Illustrative figures — and the transport rows are now out of date.*
 
-An apparent ₹7,200 advantage becomes ₹912 — inside the day's normal price range, and not worth an extra day of travel. **The honest answer is: don't make the trip.** Nothing currently tells him that.
+> **⚠️ Superseded rate card (noted 2026-09-17).** The ₹3,000 and ₹9,000 transport figures
+> above were computed with an earlier vehicle rate card that charged **no base cost** —
+> per-kilometre only. The repo's single canonical card is now `data/vehicle_rates.json`:
+> Tempo, 30 quintals, base ₹1,000 + ₹10/km; Truck, 100 quintals, base ₹2,500 + ₹20/km
+> (see the 2026-09-17 entry in `docs/DECISIONS.md`). Under that card the transport rows,
+> the two net figures and the ranking they produce are all different, so the "don't make
+> the trip" conclusion drawn from this table does not follow from the rates the repo
+> currently ships. The table is kept only to show the *shape* of the argument —
+> commission scales with price, transport does not scale with quantity.
+>
+> **For current figures, run `python demo.py`**, which computes this same 40-quintal
+> comparison from `data/vehicle_rates.json` and `data/example_market_prices.csv`. Those
+> rates remain **unsourced placeholders** (open risk #2 in `claude.md`); they are not
+> quotable to a farmer, and no replacement figures have been written into this README
+> rather than being computed.
+
+On those superseded figures, an apparent ₹7,200 advantage becomes ₹912 — inside the day's normal price range, and not worth an extra day of travel. **The honest answer would then be: don't make the trip.** Nothing currently tells him that either way, and which answer is right for a given rate card is exactly what the engine is for.
 
 Two structural reasons the gap closes:
 - Commission is a **percentage** of sale value, so a higher price means a larger deduction
@@ -139,19 +155,37 @@ repository root. The first launch installs dependencies; keep its terminal open.
 
 ### Repository map
 
+Covers the whole repository, not just the transport backend.
+
 ```text
+src/mandiwise/             Recommendation engine: net realisation ranking and
+                           whole-vehicle transport cost
+                           (models.py, recommendation.py, transport.py)
+tests/                     Tests for src/mandiwise/
+demo.py                    Runs the 40-quintal comparison above from
+                           data/vehicle_rates.json and data/example_market_prices.csv
+CORE_ENGINE_README.md      Engine scope, quick start and what it does not yet do
+mandi_pull.py              data.gov.in AGMARKNET puller — daily live feed
+ceda_pull.py               CEDA puller — historical prices and arrival volumes
 backend/
-  src/mandiwise_transport/   Python engine, API, database and portal
+  src/mandiwise_transport/ Transport engine, API, database and portal
     web/templates/          Calculator and pooling HTML
     web/static/             Readable CSS and JavaScript
   tests/                    Engine, API, portal and migration tests
   migrations/               Versioned database schema changes
   scripts/                  API demo client and dataset study
   README.md                 Developer setup
-docs/transport/             Transport demo, handoff and implementation guides
-data/                       Existing shared market snapshots (unchanged)
-research/                   Existing project research (unchanged)
-START_MANDIWISE.cmd          Windows one-click launcher
+docs/                      Architecture, decisions, tasks, domain notes
+  transport/               Transport demo, handoff and implementation guides
+  MILESTONE_2_3_IMPLEMENTATION.md  Mid-semester engine implementation evidence
+  TRANSPORT_DATA_REVIEW.md  Dataset review (counts are of an earlier snapshot)
+data/                      Two kinds of file, not one:
+                           - committed AGMARKNET and CEDA price snapshots
+                           - vehicle_rates.json, the single placeholder rate card,
+                             and example_market_prices.csv, the demo fixture —
+                             configuration and fixtures, not price data
+research/                  findings.md (data validation) and commodity aliases
+START_MANDIWISE.cmd        Windows one-click launcher for the transport portal
 ```
 
 Accounts and messages stay in a local, ignored database; **never commit databases,

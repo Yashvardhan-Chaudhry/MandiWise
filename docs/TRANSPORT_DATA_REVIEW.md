@@ -1,5 +1,33 @@
 # Transport backend: data review (2026-09-08)
 
+> ## ⚠️ SCOPE NOTE — added 2026-09-17: these counts are historical, not current
+>
+> **What this document was computed over:** the **5** data files present in `data/` at
+> commit `39657f9a20cf6d00e3be184d237571417ec7e9a9` — three CEDA commodity files
+> (onion, potato, tomato) and the two Punjab live-feed snapshots. Every figure below,
+> including the **8,866 record** total and the per-snapshot table, describes **that**
+> snapshot of `data/` and nothing later.
+>
+> **What changed since:** a backfill (commit `e984cc3`, "Complete Patiala backfill: 8
+> commodities, 2 years, with arrivals") more than doubled the corpus. `data/` now holds
+> **12** files, and `research/findings.md` reports 16,907 historical rows plus 836
+> live-feed rows for the current corpus.
+>
+> The counts below have **not** been recomputed and no figure here has been adjusted or
+> estimated forward. Treat every number in this document as a measurement of the 5-file
+> snapshot. Re-running the review over all 12 files is an open task in `docs/TASKS.md`
+> ("Re-run the transport data review over the full corpus"); reproduce with
+> `python scripts/study_data.py --data-dir ../data` from `backend/`. This note comes out
+> when the numbers are recomputed.
+>
+> **The findings are not withdrawn.** The data-quality observations, the implications and
+> the scope resolutions below were true of the files examined and nothing has contradicted
+> them; only the record counts are known to be out of date.
+>
+> One other line has been overtaken: the closing bullet calls `research/findings.md` a
+> pending report. It was written up on 2026-09-17 and is no longer pending; its
+> conclusions are its own and are not restated here.
+
 Read-only analysis of the five committed datasets at main commit
 `39657f9a20cf6d00e3be184d237571417ec7e9a9`, plus README, architecture v0.1,
 DECISIONS, TASKS, DOMAIN, IMPROVEMENTS, commodity aliases, both puller scripts,
