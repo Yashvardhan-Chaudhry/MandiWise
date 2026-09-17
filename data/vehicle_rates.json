@@ -1,0 +1,8 @@
+{
+  "purpose": "Illustrative demo rate card only. Admin-maintained production rates require a source and effective date.",
+  "effective_from": "2026-09-01",
+  "vehicles": [
+    {"name": "Tempo", "capacity_quintals": 30, "base_cost_inr": 0, "per_km_cost_inr": 75},
+    {"name": "Truck", "capacity_quintals": 100, "base_cost_inr": 0, "per_km_cost_inr": 100}
+  ]
+}
