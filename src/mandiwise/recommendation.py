@@ -58,12 +58,19 @@ def rank_mandis(
     **kwargs: object,
 ) -> list[Recommendation]:
     """Return recommendations highest net amount first; ties favour the nearer mandi."""
-    results = [
-        calculate_recommendation(offer, quantity_quintals, vehicle_types, **kwargs)
+    # Each result is carried with the offer that produced it. Keying distance
+    # by mandi name instead collapsed two offers for the same mandi into one
+    # entry, so both rows sorted on whichever distance happened to win and the
+    # "ties favour the nearer mandi" rule silently stopped applying.
+    scored = [
+        (offer, calculate_recommendation(offer, quantity_quintals, vehicle_types, **kwargs))
         for offer in offers
     ]
-    distance_by_mandi = {offer.price.mandi_name: offer.distance_km for offer in offers}
-    return sorted(
-        results,
-        key=lambda item: (-item.net_realisation_inr, distance_by_mandi[item.mandi_name], item.mandi_name),
+    scored.sort(
+        key=lambda pair: (
+            -pair[1].net_realisation_inr,
+            pair[0].distance_km,
+            pair[1].mandi_name,
+        )
     )
+    return [recommendation for _, recommendation in scored]

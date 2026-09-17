@@ -54,6 +54,29 @@ class RecommendationTests(unittest.TestCase):
         result = calculate_recommendation(old, 20, [TEMPO], today=date(2026, 9, 17))
         self.assertTrue(result.is_stale)
 
+    def test_same_mandi_name_twice_keeps_each_offers_own_distance(self) -> None:
+        """Two offers from one mandi must each tie-break on their own distance.
+
+        Real data has a single market reporting two varieties of one commodity
+        on the same day, so duplicate mandi names do reach rank_mandis.
+        Distances used to be looked up by mandi name, so one offer's distance
+        overwrote the other's and both rows tie-broke on whichever survived.
+
+        Prices here are chosen so the two nets land exactly equal despite very
+        different distances, which is what forces the tie-break to decide.
+        """
+        near = offer("Ghanaur", "1200", "15")    # transport 2 x 75 x 15  = 2250
+        far = offer("Ghanaur", "1575", "111")    # transport 2 x 75 x 111 = 16650
+        ranked = rank_mandis([far, near], 40, [TEMPO], today=date(2026, 9, 17))
+
+        self.assertEqual(
+            ranked[0].net_realisation_inr,
+            ranked[1].net_realisation_inr,
+            "test is only meaningful if the nets actually tie",
+        )
+        self.assertEqual(ranked[0].transport_inr, Decimal("2250.00"))
+        self.assertEqual(ranked[1].transport_inr, Decimal("16650.00"))
+
 
 if __name__ == "__main__":
     unittest.main()

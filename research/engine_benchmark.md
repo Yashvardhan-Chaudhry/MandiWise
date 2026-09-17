@@ -179,6 +179,13 @@ sufficient on its own.
 
 ### 4a. Does the `recommendation.py:65` name-key bug fire?
 
+> **FIXED 2026-09-17, after this report was written.** `rank_mandis` now carries each
+> result alongside the offer that produced it instead of looking distance up by mandi name.
+> The findings below describe the code as it stood when measured, and the constructed
+> reproduction is now covered by a regression test in `tests/test_recommendation.py`
+> (verified to fail against the pre-fix code).
+
+
 Line 65 builds `distance_by_mandi = {offer.price.mandi_name: offer.distance_km for offer in offers}`
 and line 68 looks distances up from it. Two offers with the same mandi *name* collapse to one entry
 — last one wins.
