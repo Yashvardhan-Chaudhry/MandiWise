@@ -1,15 +1,20 @@
-name: Transport backend
+# Two independent jobs: `test` covers backend/ (the transport service),
+# `core` covers the root-level code (the recommendation engine and the data
+# pullers). The path filters are workflow-level, so they list both trees --
+# a change to either runs both jobs, and each job installs what it needs.
+name: CI
 on:
   push:
-    paths: ['backend/**', '.github/workflows/transport.yml']
+    paths: ['backend/**', 'src/**', 'tests/**', '*.py', '.github/workflows/transport.yml']
   pull_request:
-    paths: ['backend/**', '.github/workflows/transport.yml']
+    paths: ['backend/**', 'src/**', 'tests/**', '*.py', '.github/workflows/transport.yml']
 
 permissions:
   contents: read
 
 jobs:
   test:
+    name: Transport backend
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -34,3 +39,18 @@ jobs:
       - run: uv run pytest -q
         env:
           TEST_POSTGRES_URL: postgresql+psycopg://postgres:ci-test-only@localhost:5432/mandiwise_test
+
+  core:
+    name: Recommendation engine and pullers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # Nothing to install: the root tree has no pyproject, no requirements
+      # and no third-party imports. tests/ uses stdlib unittest and its own
+      # sys.path.insert, so pytest would be an undeclared dependency.
+      # A syntax check only -- mandi_pull.py and ceda_pull.py have no tests.
+      - run: python -m compileall -q demo.py mandi_pull.py ceda_pull.py src tests
+      - run: python -m unittest discover -s tests -v

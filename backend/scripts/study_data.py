@@ -1,6 +1,7 @@
 """Read-only, reproducible inventory of the repository's five frozen datasets."""
 
 import json
+import sys
 from collections import Counter
 from datetime import datetime
 from decimal import Decimal
@@ -12,6 +13,12 @@ def study(directory):
     identity = ("state", "district", "market", "commodity", "variety", "grade", "arrival_date")
     for path in sorted(Path(directory).glob("*.json")):
         rows = json.loads(path.read_text(encoding="utf-8"))
+        # data/ is shared -- it also holds config like vehicle_rates.json.
+        # A snapshot is a list of row dicts; anything else is somebody else's
+        # file and is skipped out loud rather than silently mangled.
+        if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows):
+            print(f"skipping {path.name} (not a price snapshot)", file=sys.stderr)
+            continue
         dates = [datetime.strptime(r["arrival_date"], "%d/%m/%Y").date() for r in rows]
         keys = Counter(tuple(r.get(k) for k in identity) for r in rows)
         prices = [
@@ -42,5 +49,9 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
+    # Positional form so the script works from the repo root too; --data-dir
+    # stays because backend/README.md and docs/ document it.
+    parser.add_argument("directory", nargs="?")
     parser.add_argument("--data-dir", default="../data")
-    print(json.dumps(study(parser.parse_args().data_dir), indent=2, ensure_ascii=False))
+    args = parser.parse_args()
+    print(json.dumps(study(args.directory or args.data_dir), indent=2, ensure_ascii=False))
