@@ -20,7 +20,17 @@ ROOT = Path(__file__).parent
 
 def main() -> None:
     vehicle_data = json.loads((ROOT / "data" / "vehicle_rates.json").read_text())
-    vehicles = [VehicleType(**row) for row in vehicle_data["vehicles"]]
+    # Rows carry provenance (source, effective_from) that VehicleType has no
+    # field for. Select only the engine's fields rather than **row, which
+    # would raise on the provenance keys -- and print the label, so the
+    # "these are not real rates" warning reaches whoever reads the output.
+    fields = ("name", "capacity_quintals", "base_cost_inr", "per_km_cost_inr")
+    vehicles = [
+        VehicleType(**{k: row[k] for k in fields})
+        for row in vehicle_data["vehicles"]
+    ]
+    print(vehicle_data["purpose"])
+    print()
     offers = []
     with (ROOT / "data" / "example_market_prices.csv").open(newline="") as stream:
         for row in csv.DictReader(stream):

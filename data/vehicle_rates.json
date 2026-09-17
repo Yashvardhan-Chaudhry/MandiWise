@@ -1,8 +1,23 @@
 {
-  "purpose": "Illustrative demo rate card only. Admin-maintained production rates require a source and effective date.",
+  "purpose": "PLACEHOLDER RATE CARD - NOT SOURCED. Illustrative figures only, used so the engine has something to run against. Open risk #2 in claude.md stays open until real local transport rates are confirmed with a supplier. Do not quote these to a farmer.",
+  "canonical": "This file is the single rate card for the repo. backend/src/mandiwise_transport/web/static/vehicles.js and backend/scripts/demo_client.py carry the same numbers; the production path reads the transport_rate_card table, which enforces source and effective dates.",
   "effective_from": "2026-09-01",
   "vehicles": [
-    {"name": "Tempo", "capacity_quintals": 30, "base_cost_inr": 0, "per_km_cost_inr": 75},
-    {"name": "Truck", "capacity_quintals": 100, "base_cost_inr": 0, "per_km_cost_inr": 100}
+    {
+      "name": "Tempo",
+      "capacity_quintals": 30,
+      "base_cost_inr": 1000,
+      "per_km_cost_inr": 10,
+      "source": "PLACEHOLDER - unsourced illustrative figure",
+      "effective_from": "2026-09-01"
+    },
+    {
+      "name": "Truck",
+      "capacity_quintals": 100,
+      "base_cost_inr": 2500,
+      "per_km_cost_inr": 20,
+      "source": "PLACEHOLDER - unsourced illustrative figure",
+      "effective_from": "2026-09-01"
+    }
   ]
 }
