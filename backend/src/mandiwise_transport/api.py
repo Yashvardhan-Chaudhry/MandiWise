@@ -1,5 +1,6 @@
 import os
 from importlib.resources import files
+from pathlib import Path
 from typing import Annotated
 
 import jwt
@@ -96,7 +97,11 @@ def record(row):
     return {column.name: getattr(row, column.name) for column in row.__table__.columns}
 
 
-def create_app(database_url=None, jwt_secret=None):
+# Repository root /data; the ranking reads committed snapshots and rate files from it.
+DEFAULT_DATA_DIR = Path(__file__).resolve().parents[3] / "data"
+
+
+def create_app(database_url=None, jwt_secret=None, data_dir=None):
     secret = jwt_secret or os.getenv("JWT_SECRET", "")
     if len(secret.encode()) < 32:
         raise RuntimeError("Set JWT_SECRET to a random secret of at least 32 bytes")
@@ -116,6 +121,11 @@ def create_app(database_url=None, jwt_secret=None):
     from .portal import router as portal_router
 
     app.include_router(portal_router)
+    from .rankings import router as rankings_router
+
+    app.include_router(rankings_router)
+    app.state.data_dir = Path(data_dir or os.getenv("MANDIWISE_DATA_DIR") or DEFAULT_DATA_DIR)
+    app.state.pricing_inputs = None
 
     @app.get("/", include_in_schema=False)
     def home():
