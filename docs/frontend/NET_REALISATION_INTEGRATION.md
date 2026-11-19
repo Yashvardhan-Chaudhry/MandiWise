@@ -4,7 +4,9 @@ Supersedes the earlier frontend notes that ranking has no API or screen. Earlier
 
 ## Branch and dependency
 
-Local branch: `feature/net-realisation-frontend`. Based on frontend commit `8a8e58d`, with Yash's open PR #1 merged locally at `e569e1b421e13ddd420caaecbe318f279530d1a1`. This preserves his authorship and incorporates the canonical engine, ranking API, data configuration and appended decisions. It does not merge or close PR #1 on GitHub and does not change main. Coordinate upstream merge order with Yash (his API first).
+Branch: `feature/net-realisation-frontend`. Based on frontend commit `8a8e58d`, with Yash's PR #1 engine commit `e569e1b421e13ddd420caaecbe318f279530d1a1` and ranking UI commit `e9ce860`. On the subsequent upload pass, fetched origin and merged `origin/main` at `adc9da8` (Yash's merge of PR #1) into this branch without conflicts. The merge made no additional code changes because the engine commit was already present. Authorship is preserved; main is not modified by this contribution.
+
+This branch includes the earlier React client from PR #2 as well as the ranking integration. Review it as the combined frontend contribution; avoid independently merging competing copies of the same work. It can be merged after PR #2 or reviewed against main as a combined change.
 
 ## User flow
 
@@ -28,4 +30,10 @@ Restart the backend using `START_MANDIWISE.cmd`, then start/refresh `START_FRONT
 
 Verification: 78 backend tests passed, one skipped; frontend tests and production build passed. Real-API Chrome checks covered ordering, breakdown and range values, stale labels, 390px mobile overflow, edited-input invalidation, crop-selection reset, API failure, discarding a late response, and the existing transport calculator. Isolated test database: `work/ranking-browser-validation.db`; user's portal database was not used. Visual review caught and corrected wrapped currency digits on narrow screens. Public deployment and hosted CI runs were not performed.
 
-Next team steps: land/review PR #1, integrate this frontend branch, source actual rates/distances, add grade-compatible filtering in the API contract, then finish translation review and deployment. Do not replace Yash's engine with browser-side calculations.
+Next team steps: review/integrate this frontend branch, source actual rates/distances, add grade-compatible filtering in the API contract, then finish translation review and deployment. Do not replace Yash's engine with browser-side calculations.
+
+## Alignment with Yash's handoff
+
+Read `docs/handoff/SARTHAK_FRONTEND.md` from `origin/docs/report-and-handoffs` during upload preparation. Its first priority (ranking journey) is implemented here. Its next priorities remain: migrate the older price explorer from its bundled JSON/filter to the commodities/markets API, add report figures under `report/figures`, and obtain human translation verification. The ranking screen already uses the APIs; the old explorer still uses its original snapshot. Chat still uses manual refresh. Do not mark those remaining handoff items complete.
+
+Proxy note: the existing client uses `changeOrigin: true` plus narrowly scoped translation of the two allowed local frontend Origin values to the backend origin. That differs from the handoff's simpler `changeOrigin: false` configuration but avoids its Host/Origin mismatch; prior real-cookie tests verified local writes succeed and foreign-origin writes fail. Keep this intentional distinction visible during integration review.
