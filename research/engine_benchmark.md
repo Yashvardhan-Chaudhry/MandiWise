@@ -174,8 +174,10 @@ snapshot.
 
 Side observation, not part of the brief: **19 rows pass validation with a modal price below
 INR 10/quintal** (e.g. Patti APMC brinjal at INR 0.18). The min/max bracket the modal, so §4's rule
-accepts them, and they flow through to a large negative net realisation. §4 validation is not
-sufficient on its own.
+accepts them. The harness does not run these rows through the engine (4b below evaluates Patiala
+rows only, and none of the 19 is from Patiala), so their net realisation was not measured; at these
+prices, though, the gross on a lot is a few rupees, which fixed handling and transport would exceed.
+§4 validation is not sufficient on its own.
 
 ### 4a. Does the `recommendation.py:65` name-key bug fire?
 
@@ -228,6 +230,8 @@ offers            : Ghanaur @111 km (INR 1250/q) listed first
 distance_by_mandi : {'Ghanaur': '15'}     2 offers -> 1 key
 transport paid    : INR 4220.00 (returned first), INR 2300.00 (returned second)
 ```
+
+*This block is pre-fix output. The current harness prints `transport paid : INR 2300.00, INR 4220.00` — the nearer mandi first.*
 
 Both rows now sort on the same collapsed distance, so the documented *"ties favour the nearer
 mandi"* rule becomes inert, `sorted` falls back to input order, and the farther mandi — the one
@@ -304,9 +308,13 @@ not the *ranking*. That is not a general guarantee — it is one example with tw
    `vehicle_packing` (`ARCHITECTURE.md` §3.3 names one module). This benchmark says they agree, so
    the choice can be made on other grounds — scaling, units, tie-break policy — rather than on
    correctness. That choice is not made here and belongs in `DECISIONS.md`.
-4. **One confirmed bug:** `recommendation.py:65` keys distances by mandi name. It fires on 4 real
-   cross-sections today with no ill effect, and misorders tied results the moment two offers share
-   a name at different distances.
+4. **One confirmed bug — since fixed.** `recommendation.py:65` keyed distances by mandi name. It
+   fired on 4 real cross-sections with no ill effect (both colliding rows were the same physical
+   market, so they shared a distance), and would have misordered tied results the moment two offers
+   shared a name at different distances. **Fixed 2026-09-17 in commit `3eb7f7f`**: `rank_mandis` now
+   carries each result with the offer that produced it, and
+   `tests/test_recommendation.py::test_same_mandi_name_twice_keeps_each_offers_own_distance`
+   guards it — that test was verified to fail against the pre-fix code.
 5. **One confirmed spec gap:** `calculate_recommendation` omits `market_fee`, overstating net
    realisation by `gross × fee_rate` on every single row — roughly 2.2% at an assumed 2%. The real
    rate is unknown; sourcing it is the blocking step, not the code change.

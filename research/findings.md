@@ -108,7 +108,9 @@ These emerged from the validation and matter for the ingestion pipeline:
    prices of ₹0.08–₹32.90 on *both* live pull days (11 rows, then 12) against real
    prices starting near ₹200. Not a one-off glitch — a recurring, mandi-specific
    reporting fault. A ₹50 floor rejects and logs them (see `docs/DECISIONS.md`).
-   Without it, dispersion inflated to a meaningless *3,807,900%*.
+   Without it, a single comparison — green chilli on 2026-09-04, ₹0.10 against ₹3,808 —
+   inflated to a meaningless *3,807,900%* dispersion. The median is unaffected (73.1% over
+   2,822 groups without the floor); the damage is to individual comparisons.
 2. **~30% of commodity names disagree between the two sources.** Full analysis in
    `research/commodity_aliases.md`. Two names could not be mapped and were left
    unmapped rather than guessed.

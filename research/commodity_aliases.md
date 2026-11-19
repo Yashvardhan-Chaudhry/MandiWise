@@ -28,18 +28,18 @@ Roughly **30% of names do not match exactly** across two sources describing the 
 
 These ids returned real Patiala data in the CEDA backfill, so the mapping is confirmed end to end rather than by name similarity alone.
 
-| data.gov.in | CEDA | id | Status as of 2026-09-07 |
+| data.gov.in | CEDA | id | Status as of 2026-09-17 |
 |---|---|---|---|
 | Potato | Potato | 24 | ✅ confirmed — 2,657 rows / 741 days |
 | Onion | Onion | 23 | ✅ confirmed — 2,680 rows / 710 days |
 | Tomato | Tomato | 78 | ✅ confirmed — 2,693 rows / 742 days |
-| Green Chilli | Green Chilli | 87 | ⏳ backfill in progress |
-| Brinjal | Brinjal | 35 | ⏳ queued |
-| Cauliflower | Cauliflower | 34 | ⏳ queued |
-| Bhindi(Ladies Finger) | Bhindi (Ladies Finger) | 85 | ⏳ queued |
-| Cucumbar(Kheera) | Cucumber (Kheera) | 159 | ⏳ queued |
+| Green Chilli | Green Chilli | 87 | ✅ confirmed — 1,995 rows / 717 days |
+| Brinjal | Brinjal | 35 | ✅ confirmed — 1,863 rows / 682 days |
+| Cauliflower | Cauliflower | 34 | ✅ confirmed — 1,992 rows / 720 days |
+| Bhindi(Ladies Finger) | Bhindi (Ladies Finger) | 85 | ✅ confirmed — 1,255 rows / 565 days |
+| Cucumbar(Kheera) | Cucumber (Kheera) | 159 | ✅ confirmed — 1,772 rows / 713 days |
 
-The queued rows are name matches that have been *requested* but have not yet returned data — update the status column as the backfill lands, and treat them as unconfirmed until then.
+The last five were listed as in progress / queued on 2026-09-07; all five landed in the 2026-09-17 backfill (commit `e984cc3`, `data/ceda_3_48_{87,35,34,85,159}_2023-10-01_2025-10-31.json`). Counts are rows in each file and distinct `arrival_date` values.
 
 ## Differ only by punctuation or spacing
 
@@ -65,7 +65,7 @@ Punctuation normalisation is not enough here; the words themselves are spelled d
 
 | data.gov.in | Proposed CEDA | id | Note |
 |---|---|---|---|
-| Cucumbar(Kheera) | Cucumber (Kheera) | 159 | "Cucumbar" vs "Cucumber" — requested in the backfill, not yet returned |
+| Cucumbar(Kheera) | Cucumber (Kheera) | 159 | "Cucumbar" vs "Cucumber" — confirmed by the 2026-09-17 backfill (see *Verified by use*) |
 | Raddish | Radish | 161 | doubled "d" |
 | Mashrooms | Mushrooms | 340 | "Mash" vs "Mush" |
 | Chilly Capsicum | Chilli Capsicum | 88 | "Chilly" vs "Chilli"; note CEDA also has plain `Capsicum` (164), which the feed lists separately too |

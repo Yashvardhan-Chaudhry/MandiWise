@@ -10,7 +10,9 @@ It intentionally covers the current mid-semester implementation boundary:
 - ranking with a transparent cost breakdown
 - automated calculation tests and illustrative demo data
 
-It does **not** yet provide a web UI, user authentication, database persistence, a live scheduled import, or route optimisation. Those are later milestones.
+This bundle does **not** provide a web UI, user authentication, database persistence, a live scheduled import, or route optimisation. The first three now exist separately, for transport and pooling, in `backend/` (a FastAPI service with a database and web UI); a live scheduled import and route optimisation are still later milestones.
+
+Per `docs/DECISIONS.md` (2026-09-17), `net_realisation` is to be rebuilt in the canonical engine, `backend/src/mandiwise_transport/engine.py`, adding the `market_fee` term and min/max range this version lacks; that rebuild was done on 2026-11-19 (PR #1, `engine.net_realisation`, exposed via `POST /v1/rankings`), so this bundle is no longer the canonical net-realisation path.
 
 ## Quick start
 
@@ -35,4 +37,4 @@ python3 demo.py
 
 ## Important data note
 
-The files in `data/` are **illustrative demo/configuration data**, not live AGMARKNET records or legal fee schedules. The production pipeline must replace market prices with cleaned dated imports and must maintain commission/handling/vehicle rates with source notes and effective dates.
+The two `data/` files this engine reads — `vehicle_rates.json` and `example_market_prices.csv` — are **illustrative demo/configuration data**, not live AGMARKNET records or legal fee schedules. `data/` now also holds real price pulls (AGMARKNET via data.gov.in, `punjab_*.json`, and CEDA historical backfills, `ceda_*.json`); those are read by `mandi_pull.py analyse` and `research/engine_benchmark.py`, not by `demo.py`. The production pipeline must replace market prices with cleaned dated imports and must maintain commission/handling/vehicle rates with source notes and effective dates.
