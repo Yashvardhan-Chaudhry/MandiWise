@@ -512,7 +512,8 @@ def experiment_real_data(rate_card) -> dict:
     print()
 
     # ---------------- 4a: the mandi-name key collision --------------------
-    print("  4a. recommendation.py:65 - distance_by_mandi keyed by mandi NAME")
+    print("  4a. duplicate mandi names in one cross-section "
+          "(bug FIXED 2026-09-17, commit 3eb7f7f)")
     print("  " + "-" * 74)
     sections = collections.defaultdict(list)
     for r in valid:
@@ -582,8 +583,8 @@ def experiment_real_data(rate_card) -> dict:
         for row in collision_report[-1]["rows"]:
             if row[1] in repeated:
                 print("      %-12s %-22s variety=%-10s grade=%-8s modal=%s" % row)
-        print("    distance_by_mandi holds %d keys for %d offers -> %d offer(s) "
-              "lose their own distance entry"
+        print("    a name-keyed lookup would hold %d keys for %d offers -> %d "
+              "offer(s) would have lost their own distance (pre-fix)"
               % (len(distance_keys), len(offers), len(offers) - len(distance_keys)))
         positions = [
             (i + 1, rec.mandi_name, rec.net_realisation_inr)
@@ -626,15 +627,17 @@ def experiment_real_data(rate_card) -> dict:
           % ("YES - both INR %s" % repro[0].net_realisation_inr
              if repro[0].net_realisation_inr == repro[1].net_realisation_inr
              else "no"))
-    print("    distance_by_mandi : %s   (2 offers collapse to %d key; last offer "
-          "wins, so BOTH rows sort on that one distance)"
+    print("    name-keyed lookup : %s   (the OLD code built this; 2 offers "
+          "collapsed to %d key, so both rows sorted on one distance)"
           % ({k: str(v) for k, v in lookup.items()}, len(lookup)))
     print("    transport paid    : %s"
           % ", ".join("INR %s" % r.transport_inr for r in repro))
-    print("    -> the row returned first is the one with the HIGHER transport")
-    print("       bill (the farther mandi), because both rows sorted on the same")
-    print("       collapsed distance and the tie-break became inert. Keying the")
-    print("       lookup by offer identity instead of name fixes it.")
+    print("    -> rank_mandis now carries each result with the offer that")
+    print("       produced it, so both rows keep their own distance and the")
+    print("       order above reflects the real figures. Before the fix they")
+    print("       both sorted on whichever distance the name lookup kept.")
+    print("       Regression test: tests/test_recommendation.py")
+    print("       ::test_same_mandi_name_twice_keeps_each_offers_own_distance")
     print()
 
     # ---------------- 4b: the missing market_fee term ---------------------

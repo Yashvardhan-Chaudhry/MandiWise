@@ -14,6 +14,12 @@ A farmer with 40 quintals of potato has one question: *where do I sell, and what
 
 The Government of India publishes daily prices from every mandi in the country as an open API. That data is good, it's free, and it's available in several languages. **And it still doesn't answer his question** — because the highest price is not the best price.
 
+> **⚠️ The transport rows in this table are computed with a superseded rate card.** They are kept
+> to show the *shape* of the argument — commission scales with price, transport does not scale with
+> quantity — not as current figures. Under the card the repo ships today, the numbers differ but
+> the winning mandi does not: Mandi B still ranks first, by a wider margin than the ₹912 below.
+> **Run `python demo.py` for current figures.** Full note below the table.
+
 | 40 quintals of potato | Mandi A (local) | Mandi B (60 km) |
 |---|---|---|
 | Price per quintal | ₹1,200 | ₹1,380 |
@@ -29,10 +35,10 @@ The Government of India publishes daily prices from every mandi in the country a
 > above were computed with an earlier vehicle rate card that charged **no base cost** —
 > per-kilometre only. The repo's single canonical card is now `data/vehicle_rates.json`:
 > Tempo, 30 quintals, base ₹1,000 + ₹10/km; Truck, 100 quintals, base ₹2,500 + ₹20/km
-> (see the 2026-09-17 entry in `docs/DECISIONS.md`). Under that card the transport rows,
-> the two net figures and the ranking they produce are all different, so the "don't make
-> the trip" conclusion drawn from this table does not follow from the rates the repo
-> currently ships. The table is kept only to show the *shape* of the argument —
+> (see the 2026-09-17 entry in `docs/DECISIONS.md`). Under that card the transport rows
+> and the two net figures are different; the ranking is not — Mandi B still comes first —
+> but the margin between them is, so the "don't make the trip" conclusion drawn from this
+> table does not follow from the rates the repo currently ships. The table is kept only to show the *shape* of the argument —
 > commission scales with price, transport does not scale with quantity.
 >
 > **For current figures, run `python demo.py`**, which computes this same 40-quintal
@@ -41,7 +47,7 @@ The Government of India publishes daily prices from every mandi in the country a
 > quotable to a farmer, and no replacement figures have been written into this README
 > rather than being computed.
 
-On those superseded figures, an apparent ₹7,200 advantage becomes ₹912 — inside the day's normal price range, and not worth an extra day of travel. **The honest answer would then be: don't make the trip.** Nothing currently tells him that either way, and which answer is right for a given rate card is exactly what the engine is for.
+On those superseded figures, an apparent ₹7,200 advantage becomes ₹912 — inside the day's normal price range, and not worth an extra day of travel. **The honest answer would then be: don't make the trip.** Under the card the repo ships today the ranking is the same but the margin is wider, so that answer does not carry over — `python demo.py` shows the current figures. Nothing currently tells him that either way, and which answer is right for a given rate card is exactly what the engine is for.
 
 Two structural reasons the gap closes:
 - Commission is a **percentage** of sale value, so a higher price means a larger deduction
@@ -91,13 +97,16 @@ Pooling is **identity-preserved**: we pool the vehicle, never the produce. Each 
 
 ## Stack
 
-| Layer | Technology |
-|---|---|
-| Client | React + Vite, multilingual from the first commit |
-| API | FastAPI (Python) |
-| Core engine | Plain Python — no framework, no I/O, fully testable |
-| Database | PostgreSQL |
-| Ingestion | Scheduled job pulling the data.gov.in AGMARKNET feed |
+Target stack, with what actually exists today marked. Planned rows are the design, not a claim
+about the current repository.
+
+| Layer | Technology | Status today |
+|---|---|---|
+| Client | React + Vite, multilingual | **Planned — not built.** The only UI is the transport/pooling pages served by the backend, currently English-only. 13 locales are decided (`docs/DECISIONS.md`) but the scaffold is an open task |
+| API | FastAPI (Python) | Built — `backend/src/mandiwise_transport/` |
+| Core engine | Plain Python — no framework, no I/O, fully testable | Built — `vehicle_packing` and `pool_split` canonical in `backend/.../engine.py`; `net_realisation` exists in `src/mandiwise/` but is incomplete (missing market fee and min/max range) |
+| Database | PostgreSQL | **Planned.** Everything runnable today uses SQLite; Postgres is exercised only in CI |
+| Ingestion | Scheduled job pulling the data.gov.in AGMARKNET feed | Puller built and validated (`mandi_pull.py`, `ceda_pull.py`); not yet running on a schedule |
 
 ---
 
@@ -137,8 +146,9 @@ Dataset review: [`docs/TRANSPORT_DATA_REVIEW.md`](docs/TRANSPORT_DATA_REVIEW.md)
 
 ### Run the transport pooling system
 
-Contribution branch: `transport-pooling-system`. This is a transport-only prototype
-for team review, not a completed mandi-ranking product or a deployed farmer network.
+Merged into `main` on 2026-09-17 (merge commit `af72340`); the old review branch was deleted on
+2026-11-19. This is a transport-only prototype, not a completed mandi-ranking product or a
+deployed farmer network.
 
 On Windows with Python 3.12 installed, double-click **`START_MANDIWISE.cmd`** at the
 repository root. The first launch installs dependencies; keep its terminal open.

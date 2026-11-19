@@ -34,7 +34,7 @@ Three questions it answers, in priority order:
 ### 3.1 Client
 React + Vite, deployed to Vercel.
 
-- Internationalisation wired in from the first commit (Punjabi, Hindi, English). Retrofitting i18n is expensive; all user-facing strings go through the translation layer from day one.
+- Internationalisation wired in from the first commit — 13 locales per `DECISIONS.md` 2026-09-17 (English, Hindi, Punjabi, Urdu, Marathi, Bengali, Gujarati, Telugu, Tamil, Kannada, Malayalam, Odia, Assamese), with English, Hindi and Punjabi populated first; the rest ship as stubs that fall back to English until a human has checked them. Retrofitting i18n is expensive; all user-facing strings go through the translation layer from day one.
 - Designed for low-end Android devices: minimal payload, large touch targets, numbers legible without reading dense text.
 - Talks to the backend over REST/JSON only. No direct database access, no business logic in the client.
 
@@ -115,7 +115,7 @@ PostgreSQL  ──►  read by the API layer
 
 **Notes**
 
-- The API resource exposes: state, district, market, commodity, variety, grade, arrival_date, min_price, max_price, modal_price. **It does not include arrival quantity** — arrivals volume would require scraping the AGMARKNET portal, which we have deliberately excluded (see `DECISIONS.md`).
+- The API resource exposes: state, district, market, commodity, variety, grade, arrival_date, min_price, max_price, modal_price. **It does not include arrival quantity** — arrivals volume would require scraping the AGMARKNET portal, which we have deliberately excluded (see `DECISIONS.md`). *Superseded 2026-09-04 — see `DECISIONS.md`: arrivals are now available historically via CEDA; the live data.gov.in feed still has none.*
 - The government resource holds a short rolling window. By snapshotting nightly, **we accumulate a price history the API itself does not provide.** This is an asset, not a workaround.
 - Step 3 is the single most underestimated part of this pipeline. Commodity and variety naming is inconsistent across states. Budget real time for the alias dictionary.
 - Failures are logged and surfaced on the admin data-health screen. A failed night must be visible, not silent.
@@ -208,7 +208,7 @@ Recorded here so it is a decision, not an omission.
 | Excluded | Reason |
 |---|---|
 | Price forecasting | We report dated observations. Prediction on this data would be fabrication. |
-| Arrivals volume | Requires scraping AGMARKNET; fragile. Liquidity proxy (§7) covers most of the value. |
+| Arrivals volume | Requires scraping AGMARKNET; fragile. Liquidity proxy (§7) covers most of the value. *Superseded 2026-09-04 — see `DECISIONS.md`: arrivals are now available historically via CEDA; the live data.gov.in feed still has none.* |
 | Payments / settlement | We are a pre-transaction decision tool. |
 | Replacing the arhatiya | Particularly his lending role. Credit is untouched. |
 | Trading / bidding | That is eNAM. Different product. |

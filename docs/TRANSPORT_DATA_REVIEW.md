@@ -10,12 +10,15 @@
 >
 > **What changed since:** a backfill (commit `e984cc3`, "Complete Patiala backfill: 8
 > commodities, 2 years, with arrivals") more than doubled the corpus. `data/` now holds
-> **12** files, and `research/findings.md` reports 16,907 historical rows plus 836
-> live-feed rows for the current corpus.
+> **12** tracked files (`git ls-files data`): **10** price snapshots — 8 CEDA commodity
+> files and the same two Punjab live-feed snapshots — plus `vehicle_rates.json` and
+> `example_market_prices.csv`, which are configuration/demo files, not price data. The
+> like-for-like comparison with the 5 files above is therefore 10. `research/findings.md`
+> reports 16,907 historical rows plus 836 live-feed rows for the current corpus.
 >
 > The counts below have **not** been recomputed and no figure here has been adjusted or
 > estimated forward. Treat every number in this document as a measurement of the 5-file
-> snapshot. Re-running the review over all 12 files is an open task in `docs/TASKS.md`
+> snapshot. Re-running the review over all 10 price snapshots is an open task in `docs/TASKS.md`
 > ("Re-run the transport data review over the full corpus"); reproduce with
 > `python scripts/study_data.py --data-dir ../data` from `backend/`. This note comes out
 > when the numbers are recomputed.

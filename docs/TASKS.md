@@ -10,7 +10,7 @@ Format: `[ ] Task — claimed by: — what "done" looks like`
 
 The prepared contribution includes the transport backend, exact vehicle
 selection/cost split, saved pool lifecycle, calculator and farmer-connection prototype
-on `transport-pooling-system`. See
+was merged into `main` on 2026-09-17 (`af72340`; the review branch was deleted 2026-11-19). See
 [`transport/CONTRIBUTION.md`](transport/CONTRIBUTION.md) for scope, setup and review checks.
 The existing stage checkboxes below are intentionally unchanged: branch implementation
 is not the same as team-reviewed integration or completion of the broader project tasks.

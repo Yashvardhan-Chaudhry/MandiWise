@@ -7,7 +7,7 @@ feature branch are not automatically team-approved decisions.
 ## Keep each contribution identifiable
 
 Use a descriptive feature branch, for example
-`transport-pooling-system`. Commit using an email associated with **your own**
+`feature/net-realisation-frontend`. Commit using an email associated with **your own**
 GitHub account. GitHub Settings → Emails shows your private noreply address if needed.
 Do not reuse another contributor's address.
 

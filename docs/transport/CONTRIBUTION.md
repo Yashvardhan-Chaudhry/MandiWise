@@ -6,6 +6,10 @@ Prepared: **2026-09-16**
 
 Integration status: **proposed on a feature branch; not merged into `main`**
 
+> **Update 2026-11-19:** merged into `main` on 2026-09-17 (merge commit `af72340`), and the
+> `transport-pooling-system` branch has since been deleted. The checkout steps below describe the
+> original review; run them against `main` instead.
+
 ## What this contribution implements
 
 - Deterministic Python whole-vehicle selection and exact, quantity-proportional shares.
