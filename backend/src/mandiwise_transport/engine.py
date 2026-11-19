@@ -32,6 +32,24 @@ def rupees(value: int) -> str:
     return format(Decimal(value) / 100, ".2f")
 
 
+def trip_cost_paise(base_inr: Decimal, per_km_inr: Decimal, distance_km: Decimal) -> int:
+    """One vehicle's trip price: base + per-km x distance, rounded once, half-up.
+
+    This is the only place the trip-cost formula lives; quotes, the calculator and
+    the ranking all call it.
+    """
+    if not distance_km.is_finite() or distance_km < 0:
+        raise TransportError("Distance must be a finite non-negative value")
+    if not base_inr.is_finite() or not per_km_inr.is_finite() or base_inr < 0 or per_km_inr < 0:
+        raise TransportError("Vehicle rates must be finite non-negative values")
+    return paise(base_inr + per_km_inr * distance_km)
+
+
+def _half_up(numerator: int, denominator: int) -> int:
+    """Integer division rounded half-up, for non-negative numerators."""
+    return (2 * numerator + denominator) // (2 * denominator)
+
+
 @dataclass(frozen=True)
 class Vehicle:
     code: str
@@ -118,19 +136,103 @@ def pool_quote(quantities: dict[str, int], vehicles: list[Vehicle]) -> dict:
     plan = optimise(sum(quantities.values()), vehicles)
     shares = allocate_cost(plan["cost_paise"], quantities)
     members = []
+    individual_total = 0
     for key, quantity in sorted(quantities.items()):
-        individual = optimise(quantity, vehicles)["cost_paise"]
+        alone = optimise(quantity, vehicles)
+        individual = alone["cost_paise"]
+        individual_total += individual
         members.append(
             {
                 "participant_id": key,
                 "quantity_kg": quantity,
                 "share_inr": rupees(shares[key]),
                 "individual_cost_inr": rupees(individual),
+                "individual_vehicles": alone["vehicles"],
                 "savings_inr": rupees(individual - shares[key]),
                 "benefits_from_pooling": individual >= shares[key],
             }
         )
     plan["participants"] = members
+    plan["individual_total_inr"] = rupees(individual_total)
     plan["total_savings_inr"] = format(sum(Decimal(m["savings_inr"]) for m in members), ".2f")
     plan["all_participants_benefit"] = all(m["benefits_from_pooling"] for m in members)
     return plan
+
+
+BASIS_POINTS = 10_000
+
+
+def _deductions(price_paise_per_q, quantity_kg, commission_bp, market_fee_bp, handling, transport):
+    # A quintal is 100 kg, so value = price per quintal x kg / 100. Each component is
+    # rounded to the paisa on its own and net is taken from the rounded components,
+    # so a printed breakdown always adds up to the printed net.
+    gross = _half_up(price_paise_per_q * quantity_kg, 100)
+    commission = _half_up(gross * commission_bp, BASIS_POINTS)
+    market_fee = _half_up(gross * market_fee_bp, BASIS_POINTS)
+    net = gross - commission - market_fee - handling - transport
+    return gross, commission, market_fee, net
+
+
+def net_realisation(
+    *,
+    quantity_kg: int,
+    modal_paise_per_quintal: int,
+    min_paise_per_quintal: int,
+    max_paise_per_quintal: int,
+    commission_bp: int,
+    market_fee_bp: int,
+    handling_paise_per_quintal: int,
+    transport_paise: int,
+) -> dict:
+    """Money that reaches the farmer at one mandi (ARCHITECTURE.md section 3.3).
+
+    net = gross - commission - market_fee - handling - transport, in integer paise.
+    Rates are basis points of gross (400 bp = 4%). The modal price gives the headline
+    figure; the reported min and max prices give a range, because the modal price is
+    a typical outcome, not a guarantee. Handling and transport do not depend on the
+    price, so they are identical across the range. Net may be negative.
+    """
+    for name, value in (
+        ("quantity_kg", quantity_kg),
+        ("modal_paise_per_quintal", modal_paise_per_quintal),
+        ("min_paise_per_quintal", min_paise_per_quintal),
+        ("max_paise_per_quintal", max_paise_per_quintal),
+        ("commission_bp", commission_bp),
+        ("market_fee_bp", market_fee_bp),
+        ("handling_paise_per_quintal", handling_paise_per_quintal),
+        ("transport_paise", transport_paise),
+    ):
+        if type(value) is not int:
+            raise TransportError(f"{name} must be an integer")
+    if not 0 < quantity_kg <= MAX_KG:
+        raise TransportError("Quantity exceeds the supported 1..100000 kg range")
+    if not 0 < min_paise_per_quintal <= modal_paise_per_quintal <= max_paise_per_quintal:
+        raise TransportError("Prices must be positive with min <= modal <= max")
+    if not 0 <= commission_bp <= BASIS_POINTS or not 0 <= market_fee_bp <= BASIS_POINTS:
+        raise TransportError("Commission and market fee must be 0..10000 basis points")
+    if handling_paise_per_quintal < 0 or transport_paise < 0:
+        raise TransportError("Handling and transport must be non-negative")
+    handling = _half_up(handling_paise_per_quintal * quantity_kg, 100)
+    fixed = (quantity_kg, commission_bp, market_fee_bp, handling, transport_paise)
+    gross, commission, market_fee, net = _deductions(modal_paise_per_quintal, *fixed)
+    net_min = _deductions(min_paise_per_quintal, *fixed)[3]
+    net_max = _deductions(max_paise_per_quintal, *fixed)[3]
+    return {
+        "gross_paise": gross,
+        "commission_paise": commission,
+        "market_fee_paise": market_fee,
+        "handling_paise": handling,
+        "transport_paise": transport_paise,
+        "net_paise": net,
+        "net_min_paise": net_min,
+        "net_max_paise": net_max,
+    }
+
+
+def rank_offers(offers: list[dict]) -> list[dict]:
+    """Order by net realisation, highest first; nearer mandi, then name, break ties.
+
+    Each offer needs net_paise, distance_m and market. Returns new dicts with rank.
+    """
+    ordered = sorted(offers, key=lambda o: (-o["net_paise"], o["distance_m"], o["market"]))
+    return [{**offer, "rank": i + 1} for i, offer in enumerate(ordered)]

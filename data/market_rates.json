@@ -1,0 +1,11 @@
+{
+  "purpose": "PLACEHOLDER MARKET RATES - NOT SOURCED. Read by POST /v1/rankings so the engine has something to run against. Every response carries a placeholder warning. Replace each value with a sourced rate (state, commodity class, source, effective date) before any figure is quoted to a farmer.",
+  "is_placeholder": true,
+  "source": "PLACEHOLDER - commission 4% and handling Rs 30/quintal are the illustrative values from data/example_market_prices.csv; market fee is 0 because no fee rate has been sourced",
+  "effective_from": "2026-11-19",
+  "default": {
+    "commission_bp": 400,
+    "market_fee_bp": 0,
+    "handling_per_quintal_inr": 30
+  }
+}
