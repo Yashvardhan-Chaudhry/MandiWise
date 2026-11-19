@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-const target = "http://127.0.0.1:8001";
+const target = process.env.MANDIWISE_API_TARGET || "http://127.0.0.1:8001";
 const proxy = Object.fromEntries(
   ["/portal/api", "/v1", "/demo/calculate", "/health"].map((path) => [
     path,

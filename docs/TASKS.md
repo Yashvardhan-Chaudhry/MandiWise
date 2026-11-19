@@ -64,7 +64,7 @@ Reference: `docs/ARCHITECTURE.md` §3.2. No business arithmetic here — call th
 Reference: `docs/ARCHITECTURE.md` §3.1. React + Vite, i18n wired from the start.
 
 - [ ] i18n scaffold (Punjabi, Hindi, English) wired before any screen is built — claimed by: —
-- [ ] Ranking result screen — claimed by: —
+- [x] Ranking result screen — claimed by: Sarthak — local integration 2026-11-19 on `feature/net-realisation-frontend`, consuming PR #1. Includes crop/load/candidate distances, server-ranked net breakdown/range and stale/placeholder/source labels. Verified rates, routing and human translation review remain open; not deployed.
 - [ ] Pool creation/join flow — claimed by: —
 - [ ] Deploy to Vercel, replacing the Stage 0 placeholder — claimed by: —
 

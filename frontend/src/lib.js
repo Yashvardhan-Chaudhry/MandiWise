@@ -50,3 +50,17 @@ export function marketRows(rows) {
 export function localeText(catalogues, locale, key) {
   return catalogues[locale]?.[key] || catalogues.en[key] || key;
 }
+
+// Market names alone are not identities. Keep districts distinct, combine varieties.
+export function candidateMarkets(rows) {
+  return [
+    ...new Map(
+      rows
+        .filter((r) => r.state === "Punjab")
+        .map((r) => [
+          JSON.stringify([r.market, r.district]),
+          { market: r.market, district: r.district },
+        ]),
+    ).entries(),
+  ].map(([id, market]) => ({ id, ...market }));
+}

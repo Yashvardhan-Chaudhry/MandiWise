@@ -11,6 +11,7 @@ import { translator, locales } from "./i18n";
 import snapshot from "../../data/punjab_2026-09-07.json";
 import card from "../../data/vehicle_rates.json";
 import "./style.css";
+import Rankings from "./Rankings";
 
 const Context = createContext();
 const useApp = () => useContext(Context);
@@ -167,6 +168,7 @@ function App() {
           <nav aria-label="Main navigation">
             {[
               ["home", "◫"],
+              ["rankings", "↗"],
               ["markets", "◈"],
               ["transport", "⇄"],
               ["pools", "♧"],
@@ -200,6 +202,7 @@ function App() {
                 section in
                   {
                     home: 1,
+                    rankings: 1,
                     markets: 1,
                     transport: 1,
                     pools: 1,
@@ -268,6 +271,8 @@ function App() {
             )}
             {section === "home" ? (
               <Home />
+            ) : section === "rankings" ? (
+              <Rankings t={t} />
             ) : section === "markets" ? (
               <Markets />
             ) : section === "transport" ? (
@@ -298,7 +303,7 @@ function Home() {
           <h1>{t("welcome")}</h1>
           <p>{t("intro")}</p>
           <div className="actions">
-            <Button onClick={() => go("transport")}>{t("start")} ↗</Button>
+            <Button onClick={() => go("rankings")}>{t("rankings")} ↗</Button>
             <Button secondary onClick={() => go("pools")}>
               {t("browse")}
             </Button>
@@ -344,12 +349,7 @@ function Home() {
       </div>
       <div className="feature-grid">
         {[
-          [
-            "markets",
-            "01",
-            t("step1"),
-            "View actual source observations, dates and reported price ranges.",
-          ],
+          ["rankings", "01", t("rankings"), t("rankIntro")],
           [
             "transport",
             "02",
@@ -1367,12 +1367,17 @@ function Help() {
             <li>Saved accounts, trip discovery and membership approval.</li>
             <li>Pool lifecycle, private shares and approved-member chat.</li>
             <li>Read-only view of committed Punjab price observations.</li>
+            <li>
+              {t("rankIntro")} {t("rankDemo")}
+            </li>
           </ul>
         </section>
         <section className="card">
           <h2>{t("pending")}</h2>
           <ul>
-            <li>Verified net-return ranking API and price-derived ranges.</li>
+            <li>
+              Verified rates and automatic distances for net-return rankings.
+            </li>
             <li>Scheduled fresh prices, sourced fees and road distances.</li>
             <li>
               Current liquidity signal: two snapshot days are insufficient.

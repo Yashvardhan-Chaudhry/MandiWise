@@ -1,5 +1,7 @@
 # React frontend — 19 November 2026
 
+Update: the subsequent `feature/net-realisation-frontend` branch integrates PR #1 and the ranking screen. See `NET_REALISATION_INTEGRATION.md`; statements below about missing ranking describe the earlier frontend checkpoint.
+
 Branch: `feature/react-farmer-frontend`, based on local reviewed main `3eb7f7f`. Remote changes since that checkpoint were not checked in this implementation turn. No push or deployment performed. Backend code, original pages and the user's database are unchanged.
 
 React + Vite follows ARCHITECTURE §3.1. Business arithmetic stays on the backend; React converts kg to display quintals and formats rupees only. The frontend calls the existing cookie-authenticated endpoints with their CSRF header and optimistic versions.

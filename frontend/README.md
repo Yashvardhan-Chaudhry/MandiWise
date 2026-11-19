@@ -24,7 +24,9 @@ Alternatively, after starting the backend, double-click `START_FRONTEND.cmd` at 
 
 ## Explicit gaps
 
-This is NOT the complete promised product. Net-return ranking has no backend endpoint yet; the market browser does not call modal-price ordering a recommendation. No fresh feed, current liquidity signal, verified rates/distances, notifications, account recovery, automatic vehicle booking or payments are fabricated. Some explanatory labels and all raw crop/source names remain English pending translation review.
+The Choose a mandi screen (`#rankings`) now calls PR #1's `/v1/commodities`, `/v1/markets` and `/v1/rankings`. It compares up to ten user-selected mandis with entered road distances, displays the server's net ranking, deductions, min/max net range, variety/grade, staleness and provenance. Restart the backend after switching to this integration branch. No calculations are reimplemented in React.
+
+This is NOT the complete promised product. Ranking uses placeholder rates (including unsourced market fee set to zero), dated snapshots and manual distances. It is illustrative, not a verified quotation. No fresh feed, current liquidity signal, verified rates/distances, notifications, account recovery, automatic vehicle booking or payments are fabricated. New ranking strings use the English catalogue and fall back visibly in other locales pending human review.
 
 The price view imports the existing 7 September 2026 snapshot, not a copied/new dataset. Rows below the project's analysis floor or with invalid ordering are screened out in the display only. Raw data is untouched. Never present these as current prices.
 
@@ -33,6 +35,8 @@ The existing trip API has one district field for both endpoints. The new form ex
 ## Verify
 
 `npm test` and `npm run build`.
+
+For ranking, choose Potato, enter 40 quintals, select two mandis and enter their distances. Check the API's first result, all deductions and the net range against the screen. Changing any input must remove the previous result, including if a prior request finishes late. Test empty/error responses, different districts with the same market name, the ten-candidate limit, and mobile money readability. Local isolated testing can set `MANDIWISE_API_TARGET` to another loopback backend port; the default remains port 8001.
 
 Test two distinct accounts in separate browser sessions: post → request → approve → chat → quote → lock. Test a third account cannot approve/read chat, and verify reload preserves membership. Check rejection, withdrawal, cancellation and stale-version errors. Test narrow/mobile layouts and keyboard focus. The sign-in dialog uses native modal focus handling.
 

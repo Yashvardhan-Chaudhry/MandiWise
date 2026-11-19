@@ -1,4 +1,5 @@
 import { localeText } from "./lib";
+import { rankingEnglish } from "./ranking-strings";
 export const locales = [
   ["en", "English", "ltr"],
   ["hi", "हिन्दी · Preview", "ltr"],
@@ -15,6 +16,7 @@ export const locales = [
   ["as", "অসমীয়া · English fallback", "ltr"],
 ];
 const en = {
+  ...rankingEnglish,
   home: "Overview",
   markets: "Explore mandis",
   transport: "Transport calculator",
@@ -35,7 +37,7 @@ const en = {
   date: "Reporting date",
   historical: "Historical snapshot — not today’s prices",
   snapshotNotice:
-    "These are committed AGMARKNET observations from 7 September 2026. No live price feed or verified net-return ranking is connected yet.",
+    "These are committed AGMARKNET observations from 7 September 2026, not live prices. Choose a mandi compares illustrative net returns using the backend ranking API.",
   crop: "Crop",
   district: "District",
   all: "All",
@@ -48,7 +50,7 @@ const en = {
   empty: "No matching records. Try another filter.",
   netTitle: "Net returns need more than a price.",
   netNotice:
-    "The ranking API still needs verified route distances, applicable fees and rate cards. Prices below are observations, not recommendations. The frontend does not invent a net return.",
+    "Use Choose a mandi to compare net returns after fees and transport. Rates remain illustrative and distances are entered by you. Prices below are observations, not guaranteed selling prices.",
   distance: "Agreed road distance (km)",
   farmer: "Farmer name",
   quantity: "Load (quintals)",

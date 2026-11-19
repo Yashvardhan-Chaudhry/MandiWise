@@ -733,6 +733,7 @@ footer {
   gap: 12px;
 }
 .skip {
+  clip-path: inset(50%);
   position: fixed;
   top: -80px;
   padding: 14px;
@@ -740,6 +741,7 @@ footer {
   z-index: 100;
 }
 .skip:focus {
+  clip-path: none;
   top: 0;
 }
 .card li {
@@ -983,4 +985,76 @@ footer {
     scroll-behavior: auto !important;
     transition: none !important;
   }
+}
+/* Ranking offers remain legible while stale observations are visibly muted. */
+.ranking-form,
+.ranking-results {
+  margin-block: 24px;
+}
+.ranking-candidates {
+  display: grid;
+  gap: 12px;
+  margin-block: 16px;
+  max-height: 440px;
+  overflow-y: auto;
+}
+.ranking-candidate {
+  padding: 12px;
+  border: 1px solid #d6dfd6;
+  border-radius: 12px;
+}
+.ranking-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.ranking-check input {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.ranking-check small {
+  display: block;
+}
+.ranking-offer {
+  margin-block: 20px;
+}
+.ranking-stale {
+  background: #f2f3f2;
+  border-color: #c6ccc6;
+}
+.ranking-date {
+  color: #545e54;
+}
+.ranking-net {
+  margin-block: 16px;
+}
+.ranking-net > strong {
+  display: block;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+}
+.ranking-breakdown {
+  display: block;
+  font-size: 14px;
+  max-width: 600px;
+}
+.ranking-breakdown > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 8px;
+  border-bottom: 1px solid #d6dfd6;
+}
+.ranking-breakdown dd {
+  white-space: nowrap;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.ranking-pool-link {
+  display: inline-block;
+  margin-block: 24px;
+}
+.ranking-results {
+  overflow-wrap: anywhere;
 }
