@@ -146,8 +146,9 @@ Dataset review: [`docs/TRANSPORT_DATA_REVIEW.md`](docs/TRANSPORT_DATA_REVIEW.md)
 
 ### Run the transport pooling system
 
-Contribution branch: `transport-pooling-system`. This is a transport-only prototype
-for team review, not a completed mandi-ranking product or a deployed farmer network.
+Merged into `main` on 2026-09-17 (merge commit `af72340`); the old review branch was deleted on
+2026-11-19. This is a transport-only prototype, not a completed mandi-ranking product or a
+deployed farmer network.
 
 On Windows with Python 3.12 installed, double-click **`START_MANDIWISE.cmd`** at the
 repository root. The first launch installs dependencies; keep its terminal open.
