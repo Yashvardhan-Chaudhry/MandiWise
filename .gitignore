@@ -48,3 +48,7 @@ claude.md
 # interrupted backfill resumable; the assembled data/ceda_*.json files are
 # what actually carry the data, so there is nothing to share here.
 data/_ceda_cache/
+
+# Report build output (compile on Overleaf or with tectonic; see report/README.md)
+report/*.pdf
+report/build/
