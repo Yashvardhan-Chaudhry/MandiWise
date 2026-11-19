@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select
 
 from .db import Location, Member, PoolEvent, RateCard, Route
-from .engine import Vehicle, kg, optimise, paise, pool_quote
+from .engine import Vehicle, kg, optimise, pool_quote, trip_cost_paise
 
 
 def today():
@@ -46,9 +46,10 @@ def inputs(db, route_id, card_id, travel_date):
         Vehicle(
             v["code"],
             kg(Decimal(v["capacity_quintals"])),
-            paise(
-                Decimal(v["base_cost_inr"])
-                + Decimal(v["per_km_inr"]) * Decimal(route.distance_m) / 1000
+            trip_cost_paise(
+                Decimal(v["base_cost_inr"]),
+                Decimal(v["per_km_inr"]),
+                Decimal(route.distance_m) / 1000,
             ),
         )
         for v in card.vehicles

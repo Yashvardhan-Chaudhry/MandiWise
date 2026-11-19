@@ -12,7 +12,7 @@ from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from pydantic import Field, model_validator
 
-from .engine import Vehicle, kg, optimise, paise, pool_quote, rupees
+from .engine import Vehicle, kg, pool_quote, rupees, trip_cost_paise
 from .schemas import Input, Quantity, Text, VehicleInput
 
 router = APIRouter(tags=["presentation"])
@@ -63,18 +63,16 @@ def calculate(body: Calculation):
         Vehicle(
             v.code,
             kg(v.capacity_quintals),
-            paise(v.base_cost_inr + v.per_km_inr * body.distance_km),
+            trip_cost_paise(v.base_cost_inr, v.per_km_inr, body.distance_km),
         )
         for v in body.vehicles
     ]
     quantities = {f"farmer-{i + 1}": kg(f.quantity_quintals) for i, f in enumerate(body.farmers)}
     result = pool_quote(quantities, vehicles)
-    solo = {key: optimise(quantity, vehicles) for key, quantity in quantities.items()}
     for participant in result["participants"]:
         index = int(participant["participant_id"].split("-")[1]) - 1
         participant["name"] = body.farmers[index].name
-        participant["solo_vehicles"] = solo[participant["participant_id"]]["vehicles"]
-    result["individual_total_inr"] = rupees(sum(p["cost_paise"] for p in solo.values()))
+        participant["solo_vehicles"] = participant["individual_vehicles"]
     result["rate_breakdown"] = [
         {
             "code": v.code,
