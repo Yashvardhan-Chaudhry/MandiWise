@@ -13,9 +13,9 @@ The demo script itself is `docs/DEMO_RUNBOOK.md`.
 > - **`net_realisation`:** rebuilt in the canonical engine, with the market-fee term and the min/max
 >   range (PR #1). The fee *rate* is still an unsourced 0, so "net realisation is proven" stays on
 >   the do-not-claim list.
-> - **React client:** exists (PR #2) for calculator, pooling and price browsing. It has no ranking
->   screen yet and its hi/pa strings are unverified. Say "built, being connected to the ranking
->   API", never "multilingual UI finished".
+> - **React client:** merged into `main` (PR #4): ranking screen, calculator, pooling and price
+>   browsing, with 7 frontend tests. Its hi/pa strings are unverified. Say "built and connected to the
+>   ranking API", never "multilingual UI finished".
 
 ---
 
@@ -128,7 +128,7 @@ Read this list. One person overclaiming is the main risk.
 - ❌ That net realisation is proven. It is not.
 - ❌ That the transport rates are real. They are placeholders.
 - ❌ That the liquidity signal works on live data — we have 2 days of live data, which is not enough.
-- ❌ That there's a React client, or a multilingual UI. Neither exists.
+- ❌ That the multilingual UI is finished. The React client exists (merged 2026-11-19), but hi/pa text is unverified.
 - ❌ That it runs on PostgreSQL. Everything you'll see runs on SQLite; Postgres is CI only.
 - ❌ That `net_realisation` is finished. It's missing the market fee and the price range.
 - ❌ Any number not in the table above.

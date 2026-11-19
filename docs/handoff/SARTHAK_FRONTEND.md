@@ -142,6 +142,15 @@ If the rankings PR hasn't merged, capture `fig_ranking.png` from the mock. Its c
 
 ---
 
+## Status — merged 2026-11-19
+
+`feature/net-realisation-frontend` (PR #4) is **merged into `main`**, and the branch has been
+deleted. Run `git switch main && git pull`, and start any further work on a fresh branch from
+`main`. Open follow-ups are listed in `docs/TASKS.md` under Stage 5:
+- move the `#markets` explorer onto `/v1/markets`;
+- show one figure when the minimum and maximum nets are equal;
+- get the hi/pa strings checked by a speaker.
+
 ## Progress — Sarthak's report (received 2026-11-19)
 
 Pushed as `feature/react-farmer-frontend` (`8a8e58d`), opened as **PR #2**. Yashvardhan checked it

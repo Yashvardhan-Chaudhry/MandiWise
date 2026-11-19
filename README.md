@@ -102,7 +102,7 @@ about the current repository.
 
 | Layer | Technology | Status today |
 |---|---|---|
-| Client | React + Vite, multilingual | **Planned — not built.** The only UI is the transport/pooling pages served by the backend, currently English-only. 13 locales are decided (`docs/DECISIONS.md`) but the scaffold is an open task |
+| Client | React + Vite, multilingual | **Built** (`frontend/`, merged 2026-11-19): mandi ranking, price explorer, transport calculator and pooling screens. Run `START_MANDIWISE.cmd`, then `START_FRONTEND.cmd`, and open http://127.0.0.1:5173. The 13-locale registry exists, but hi/pa strings are partial and not yet checked by a speaker |
 | API | FastAPI (Python) | Built — `backend/src/mandiwise_transport/` |
 | Core engine | Plain Python — no framework, no I/O, fully testable | Built — `vehicle_packing` and `pool_split` canonical in `backend/.../engine.py`; `net_realisation` exists in `src/mandiwise/` but is incomplete (missing market fee and min/max range) |
 | Database | PostgreSQL | **Planned.** Everything runnable today uses SQLite; Postgres is exercised only in CI |

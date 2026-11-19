@@ -64,8 +64,8 @@ Reference: `docs/ARCHITECTURE.md` §3.2. No business arithmetic here — call th
 Reference: `docs/ARCHITECTURE.md` §3.1. React + Vite, i18n wired from the start.
 
 - [ ] i18n scaffold (Punjabi, Hindi, English) wired before any screen is built — claimed by: —
-- [x] Ranking result screen — claimed by: Sarthak — local integration 2026-11-19 on `feature/net-realisation-frontend`, consuming PR #1. Includes crop/load/candidate distances, server-ranked net breakdown/range and stale/placeholder/source labels. Verified rates, routing and human translation review remain open; not deployed.
-- [ ] Pool creation/join flow — claimed by: —
+- [x] Ranking result screen — claimed by: Sarthak — local integration 2026-11-19 on `feature/net-realisation-frontend`, consuming PR #1. Includes crop/load/candidate distances, server-ranked net breakdown/range and stale/placeholder/source labels. Verified rates, routing and human translation review remain open; not deployed. **Merged into `main` 2026-11-19 (PR #4).**
+- [x] Pool creation/join flow — claimed by: Sarthak — **merged 2026-11-19** (PR #4): post, join, approve/reject, withdraw, quote, lifecycle, chat
 - [ ] Deploy to Vercel, replacing the Stage 0 placeholder — claimed by: —
 
 ---
@@ -125,7 +125,10 @@ ta, kn, ml, or, as. Only en/hi/pa get populated catalogues — the other ten are
 
 - [x] Ranking endpoint — claimed by: Yashvardhan — **done 2026-11-19**: `GET /v1/commodities`, `GET /v1/markets`, `POST /v1/rankings` (`backend/src/mandiwise_transport/rankings.py`, `pricing.py`). Public, read-only, input-capped and throttled; reads committed snapshots and placeholder rate files; every response carries dates, stale flags, sources and placeholder warnings. Contract for the client is in `docs/handoff/SARTHAK_FRONTEND.md`.
 - [ ] Source a real market-fee (cess) rate and commission/handling rates for Punjab, with source and effective date, into `data/market_rates.json` (later a `rate_config` table) — claimed by: — done looks like: no PLACEHOLDER marker in the file and the zero-fee warning disappears because the fee is real
-- [ ] React + Vite client (Stage 5) — claimed by: Sarthak — see `docs/handoff/SARTHAK_FRONTEND.md`
+- [x] React + Vite client (Stage 5) — claimed by: Sarthak — **merged 2026-11-19** (PR #4). Checked: 7 frontend tests, build, and a live ranking run at desktop and 390 px
+- [ ] Move the `#markets` explorer onto `GET /v1/commodities` + `GET /v1/markets` — claimed by: Sarthak — done looks like: `frontend/src/main.jsx` no longer imports `data/punjab_2026-09-07.json`, and `lib.marketRows` (a JS copy of the ₹50 floor and min/max rule) is deleted
+- [ ] Show one figure when `net_min == net_max` — claimed by: Sarthak — done looks like: the ranking card shows "₹X (reported min = max)" instead of "₹X – ₹X"
+- [ ] Human-check the hi/pa strings, including the new ranking strings — claimed by: Sarthak — done looks like: a written record of who checked which locale, per DECISIONS 2026-09-17; until then those locales stay labelled unverified
 
 ## Notes
 
