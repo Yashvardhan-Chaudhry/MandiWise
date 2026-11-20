@@ -12,8 +12,8 @@ The prepared contribution includes the transport backend, exact vehicle
 selection/cost split, saved pool lifecycle, calculator and farmer-connection prototype
 was merged into `main` on 2026-09-17 (`af72340`; the review branch was deleted 2026-11-19). See
 [`transport/CONTRIBUTION.md`](transport/CONTRIBUTION.md) for scope, setup and review checks.
-The existing stage checkboxes below are intentionally unchanged: branch implementation
-is not the same as team-reviewed integration or completion of the broader project tasks.
+The stage checkboxes below were brought up to date on 2026-11-20 to match what is on `main`.
+`[~]` marks a task that is partly done; the line says what is missing.
 
 ---
 
@@ -21,7 +21,7 @@ is not the same as team-reviewed integration or completion of the broader projec
 
 - [ ] Idea pitch to professor — claimed by: — professor has approved the idea, or given specific change requests to act on
 - [ ] Placeholder deployed to a live URL (per claude.md step 2 — do this before features exist) — claimed by: — a URL exists and loads something, even a static "MandiWise — coming soon" page
-- [ ] Data validation pull run (see `research/findings.md` for the two measurements) — claimed by: — `research/findings.md` has real numbers in its Results sections, not placeholders
+- [x] Data validation pull run (see `research/findings.md` for the two measurements) — claimed by: Yashvardhan — **done 2026-09-17**: spread STRONG (median 73.1%, 2,821 groups); liquidity measured on history only `research/findings.md` has real numbers in its Results sections, not placeholders
 
 ## Stage 1 — schema
 
@@ -30,22 +30,22 @@ Reference: `docs/ARCHITECTURE.md` §5 (Core entities)
 - [ ] Draft the ER diagram / table list for the entities in §5 — claimed by: — a diagram or table-by-table doc reviewed by the other two
 - [ ] Write the PostgreSQL schema (tables, keys, constraints) for `mandi`, `commodity`/`variety`/`grade`, `commodity_alias`, `price_record` — claimed by: — schema applies cleanly to an empty database
 - [ ] Write the schema for `rate_config`, `vehicle_class`, `distance_matrix` — claimed by: — schema applies cleanly, `rate_config` has source + effective_date columns per the working rule in claude.md
-- [ ] Write the schema for `user`, `farmer_profile`, `listing`, `pool`, `pool_member` — claimed by: — schema applies cleanly
+- [~] Write the schema for `user`, `farmer_profile`, `listing`, `pool`, `pool_member` — claimed by: Sarthak — schema applies cleanly — `transport_users`, `transport_pools` and `transport_pool_members` (plus locations, routes, rate cards, events and chat) exist through Alembic migrations 0001–0002; `farmer_profile` and `listing` do not
 
 ## Stage 2 — engine
 
 Reference: `docs/ARCHITECTURE.md` §3.3. Plain Python, no DB access, no HTTP calls, no framework imports — takes values in, returns values out.
 
-- [ ] `net_realisation` module — claimed by: — computes gross/commission/market_fee/handling/transport/net per the formula in §3.3, unit-tested against hand-computed values
-- [ ] `vehicle_packing` module — claimed by: — given a quantity and vehicle classes, solves for cheapest vehicle combination; unit-tested including a capacity-boundary case
-- [ ] `pool_split` module — claimed by: — splits pooled transport cost proportional to quantity, unit-tested
+- [x] `net_realisation` module — claimed by: Yashvardhan — **done 2026-11-19** (`engine.net_realisation`; first version by Dhrity in `src/mandiwise/`) — computes gross/commission/market_fee/handling/transport/net per the formula in §3.3, unit-tested against hand-computed values
+- [x] `vehicle_packing` module — claimed by: Sarthak — **done** (`engine.optimise`, exact DP; canonical per DECISIONS 2026-09-17) — given a quantity and vehicle classes, solves for cheapest vehicle combination; unit-tested including a capacity-boundary case
+- [x] `pool_split` module — claimed by: Sarthak — **done** (`engine.allocate_cost`, largest remainder) — splits pooled transport cost proportional to quantity, unit-tested
 
 ## Stage 3 — ingestion pipeline
 
 Reference: `docs/ARCHITECTURE.md` §4. Runs on a schedule, separate from the request path.
 
-- [ ] Fetch step — pull AGMARKNET data via data.gov.in API, paginated, per state/commodity — claimed by: —
-- [ ] Validate + normalise steps — reject bad rows, map names to canonical IDs via alias table — claimed by: —
+- [~] Fetch step — pull AGMARKNET data via data.gov.in API, paginated, per state/commodity — claimed by: Yashvardhan — `mandi_pull.py` (live, per state) and `ceda_pull.py` (history) are built and validated; they run by hand and write JSON snapshots, not the database
+- [~] Validate + normalise steps — reject bad rows, map names to canonical IDs via alias table — claimed by: — rejection is built (₹50 floor in `mandi_pull.py`; floor plus min ≤ modal ≤ max in `backend/.../pricing.py`); the alias table is researched (`research/commodity_aliases.md`) but not built
 - [ ] Upsert step — insert/update on (mandi, commodity, variety, grade, date) — claimed by: —
 - [ ] Derive step — recompute liquidity scores per §7 — claimed by: —
 - [ ] Schedule it (cron / CI job) and log failures visibly (admin data-health screen can come later; logging can't) — claimed by: —
@@ -54,18 +54,18 @@ Reference: `docs/ARCHITECTURE.md` §4. Runs on a schedule, separate from the req
 
 Reference: `docs/ARCHITECTURE.md` §3.2. No business arithmetic here — call the engine, don't reimplement it.
 
-- [ ] Request/response models (Pydantic) for a mandi-ranking request — claimed by: —
-- [ ] Auth — JWT + role-based checks (Farmer, Pool Coordinator permission, Admin) — claimed by: —
-- [ ] Ranking endpoint — orchestrates repository fetch → engine call → response — claimed by: —
-- [ ] Pool endpoints — create/join/lock a pool, following the lifecycle in §6 — claimed by: —
+- [x] Request/response models (Pydantic) for a mandi-ranking request — claimed by: Yashvardhan — **done 2026-11-19** (`rankings.py`) —
+- [~] Auth — JWT + role-based checks (Farmer, Pool Coordinator permission, Admin) — claimed by: Sarthak — JWT bearer plus cookie sessions, and admin/owner checks, are built; Coordinator is still a role, not a permission (post-merge task, claimed by Dhrity) —
+- [x] Ranking endpoint — orchestrates repository fetch → engine call → response — claimed by: Yashvardhan — **done 2026-11-19** (`POST /v1/rankings`) —
+- [x] Pool endpoints — create/join/lock a pool, following the lifecycle in §6 — claimed by: Sarthak — **done** (`/v1/pools/*`, server-enforced lifecycle, optimistic locking) —
 
 ## Stage 5 — client
 
 Reference: `docs/ARCHITECTURE.md` §3.1. React + Vite, i18n wired from the start.
 
-- [ ] i18n scaffold (Punjabi, Hindi, English) wired before any screen is built — claimed by: —
-- [x] Ranking result screen — claimed by: Sarthak — local integration 2026-11-19 on `feature/net-realisation-frontend`, consuming PR #1. Includes crop/load/candidate distances, server-ranked net breakdown/range and stale/placeholder/source labels. Verified rates, routing and human translation review remain open; not deployed.
-- [ ] Pool creation/join flow — claimed by: —
+- [~] i18n scaffold (Punjabi, Hindi, English) wired before any screen is built — claimed by: Sarthak — the React client has the 13-locale registry, RTL Urdu and Latin numerals; hi/pa strings are partial and unverified (see Internationalisation below) —
+- [x] Ranking result screen — claimed by: Sarthak — local integration 2026-11-19 on `feature/net-realisation-frontend`, consuming PR #1. Includes crop/load/candidate distances, server-ranked net breakdown/range and stale/placeholder/source labels. Verified rates, routing and human translation review remain open; not deployed. **Merged into `main` 2026-11-19 (PR #4).**
+- [x] Pool creation/join flow — claimed by: Sarthak — **merged 2026-11-19** (PR #4): post, join, approve/reject, withdraw, quote, lifecycle, chat
 - [ ] Deploy to Vercel, replacing the Stage 0 placeholder — claimed by: —
 
 ---
@@ -125,7 +125,10 @@ ta, kn, ml, or, as. Only en/hi/pa get populated catalogues — the other ten are
 
 - [x] Ranking endpoint — claimed by: Yashvardhan — **done 2026-11-19**: `GET /v1/commodities`, `GET /v1/markets`, `POST /v1/rankings` (`backend/src/mandiwise_transport/rankings.py`, `pricing.py`). Public, read-only, input-capped and throttled; reads committed snapshots and placeholder rate files; every response carries dates, stale flags, sources and placeholder warnings. Contract for the client is in `docs/handoff/SARTHAK_FRONTEND.md`.
 - [ ] Source a real market-fee (cess) rate and commission/handling rates for Punjab, with source and effective date, into `data/market_rates.json` (later a `rate_config` table) — claimed by: — done looks like: no PLACEHOLDER marker in the file and the zero-fee warning disappears because the fee is real
-- [ ] React + Vite client (Stage 5) — claimed by: Sarthak — see `docs/handoff/SARTHAK_FRONTEND.md`
+- [x] React + Vite client (Stage 5) — claimed by: Sarthak — **merged 2026-11-19** (PR #4). Checked: 7 frontend tests, build, and a live ranking run at desktop and 390 px
+- [ ] Move the `#markets` explorer onto `GET /v1/commodities` + `GET /v1/markets` — claimed by: Sarthak — done looks like: `frontend/src/main.jsx` no longer imports `data/punjab_2026-09-07.json`, and `lib.marketRows` (a JS copy of the ₹50 floor and min/max rule) is deleted
+- [ ] Show one figure when `net_min == net_max` — claimed by: Sarthak — done looks like: the ranking card shows "₹X (reported min = max)" instead of "₹X – ₹X"
+- [ ] Human-check the hi/pa strings, including the new ranking strings — claimed by: Sarthak — done looks like: a written record of who checked which locale, per DECISIONS 2026-09-17; until then those locales stay labelled unverified
 
 ## Notes
 

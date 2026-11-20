@@ -76,7 +76,7 @@ cookie also needs the header and a matching Origin.
 
 ## 4. New endpoints: build against this contract, mock until merged
 
-Built and tested on branch `engine/net-realisation-rankings` — **PR #1**. Until it merges, run the backend from that branch (`git worktree add ../mw-engine engine/net-realisation-rankings`) or use mocks. The shapes below match the code (`backend/tests/test_rankings.py` pins them).
+Merged into `main` in **PR #1** (2026-11-19). The shapes below match the code (`backend/tests/test_rankings.py` pins them).
 Money is a **decimal string in rupees**, quantities are in **quintals**, and dates are **ISO `YYYY-MM-DD`**.
 **Field names could still change in PR review.** Keep all API types and fetchers in one module
 (e.g. `src/api.ts`) so a rename is one edit. Keep mock fixtures beside it.
@@ -141,6 +141,15 @@ If the rankings PR hasn't merged, capture `fig_ranking.png` from the mock. Its c
 - [ ] Leave the old `backend/src/mandiwise_transport/web/` pages alone. Don't delete them in this PR; they go once the React client covers them.
 
 ---
+
+## Status — merged 2026-11-19
+
+`feature/net-realisation-frontend` (PR #4) is **merged into `main`**, and the branch has been
+deleted. Run `git switch main && git pull`, and start any further work on a fresh branch from
+`main`. Open follow-ups are listed in `docs/TASKS.md` under Stage 5:
+- move the `#markets` explorer onto `/v1/markets`;
+- show one figure when the minimum and maximum nets are equal;
+- get the hi/pa strings checked by a speaker.
 
 ## Progress — Sarthak's report (received 2026-11-19)
 

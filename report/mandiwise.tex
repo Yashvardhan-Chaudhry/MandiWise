@@ -25,7 +25,7 @@
 % from committed data only (CSV files in report/data/). Re-run it, never
 % edit the CSVs by hand.
 % Test counts measured 2026-11-19: backend pytest 78 passed + 1 skipped
-% (main after PR #1); root unittest 5; frontend node:test 7 (PR #4 branch).
+% (main after PR #1); root unittest 5; frontend node:test 7 (main after PR #4).
 % ---------------------------------------------------------
 \newcommand{\TestsBackend}{78}
 \newcommand{\TestsRoot}{5}
@@ -157,14 +157,14 @@ owner's name, so a premium grade still earns a premium price.
 \node[box] (engine) at (4.3,0) {Core engine\\packing $\cdot$ split $\cdot$ net};
 \node[box] (api) at (4.3,-1.4) {FastAPI service\\ranking $\cdot$ pools $\cdot$ auth};
 \node[box] (db) at (4.3,-2.8) {SQLAlchemy + Alembic\\SQLite / PostgreSQL};
-\node[pend] (react) at (8.6,-0.7) {React + Vite client\\(PR \#4)};
+\node[box] (react) at (8.6,-0.7) {React + Vite client\\ranking $\cdot$ pooling};
 \node[box] (pages) at (8.6,-2.1) {Server-rendered\\calculator \& portal};
 \draw[arrow] (src) -- node[lbl,right]{offline} (pull);
 \draw[arrow] (pull) -- (snap);
 \draw[arrow] (api) -- node[lbl,right]{values} (engine);
 \draw[{Stealth}-{Stealth}, thick] (api) -- (db);
 \draw[arrow] (snap) -- node[lbl,above,sloped]{price reads} (api);
-\draw[arrow, dashed] (react) -- (api);
+\draw[arrow] (react) -- (api);
 \draw[arrow] (pages) -- (api);
 \end{tikzpicture}}
 \caption{Architecture. Prices are pulled offline into dated snapshots; the
@@ -518,7 +518,7 @@ Ranking API: reproduces the demo, stale flags, input caps & 11\\
 Pool API: auth, lifecycle, privacy, concurrency, capacity & 21\\
 Portal, calculator, live-server and migration tests & 10\\
 First recommendation engine (root suite) & \TestsRoot\\
-React client: helpers, request headers, candidate list (PR \#4) & \TestsFrontend\\
+React client: helpers, request headers, candidate list & \TestsFrontend\\
 \midrule
 \textbf{Total} (plus 1 PostgreSQL test run in CI only) & \textbf{\TestsAll}\\
 \bottomrule

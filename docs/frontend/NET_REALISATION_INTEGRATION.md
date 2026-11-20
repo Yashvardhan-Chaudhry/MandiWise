@@ -1,5 +1,7 @@
 # Net-realisation frontend integration — 19 November 2026
 
+> **Merged into `main` on 2026-11-19 (PR #4).** The branch names below describe how the work was developed; those branches have been deleted. Open follow-ups are in `docs/TASKS.md` under Stage 5.
+
 Supersedes the earlier frontend notes that ranking has no API or screen. Earlier test and upload statements describe their own checkpoints.
 
 ## Branch and dependency
