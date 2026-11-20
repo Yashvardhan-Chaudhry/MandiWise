@@ -11,7 +11,7 @@ Use a descriptive feature branch, for example
 GitHub account. GitHub Settings → Emails shows your private noreply address if needed.
 Do not reuse another contributor's address.
 
-Push the feature branch, then open a pull request against `main` for team review.
+Branch from an up-to-date `main` (`git switch main && git pull`). Push the feature branch, then open a pull request against `main` for team review. After it merges, delete the branch; `main` is the only long-lived branch (DECISIONS 2026-11-20).
 Describe the scope, setup, tests and known limitations. Do not force-push or merge
 another person's work without coordination.
 
@@ -24,6 +24,16 @@ uv sync --frozen --extra test
 uv run ruff check src tests scripts migrations
 uv run pytest -q
 ```
+
+From `frontend/` (if you touched the client):
+
+```sh
+npm ci
+npm test
+npm run build
+```
+
+From the repository root: `python -m unittest discover -s tests`.
 
 The optional PostgreSQL test runs when TEST_POSTGRES_URL is set; CI supplies an isolated
 PostgreSQL service. UI changes should also be checked in a browser. Keep migrations

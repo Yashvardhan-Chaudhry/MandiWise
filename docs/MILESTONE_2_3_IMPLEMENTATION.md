@@ -1,5 +1,7 @@
 # Mid-Semester Implementation Evidence
 
+> **Historical (mid-semester).** This records the first engine in `src/mandiwise/`. Net realisation was later rebuilt in `backend/src/mandiwise_transport/engine.py` with the market fee and a min/max range (DECISIONS 2026-09-17, done 2026-11-19). The ₹41,880 / ₹42,792 example below uses a superseded base-0 rate card and is now that rebuild's acceptance test.
+
 ## Implemented now
 
 The core engine is implemented as pure Python with no database, network or UI dependency. It can therefore be checked against hand-worked figures and tested repeatedly.

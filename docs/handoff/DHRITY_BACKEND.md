@@ -78,7 +78,7 @@ uv run alembic upgrade head
 uv run uvicorn mandiwise_transport.api:create_app --factory --host 127.0.0.1 --port 8000
 ```
 
-**What I observed on 2026-11-19:**
+**What I observed on 2026-11-19, on the pre-merge `main`.** On today's `main` the backend suite is **78 passed, 1 skipped** (PR #1 added the net-realisation and ranking tests), the root suite is 5, and the frontend suite is 7.
 
 | Check | Result |
 |---|---|
@@ -125,7 +125,7 @@ So everything is green today, but the suite has a time-of-day failure (N1) that 
 
 ## 4. Ownership boundaries: read before branching
 
-**Not yours (Yashvardhan, branch `engine/net-realisation-rankings`):**
+**Not yours (Yashvardhan; merged into `main` in PR #1):**
 - Rebuilding `net_realisation` inside `backend/src/mandiwise_transport/engine.py`, adding market fee and the min/max range.
 - Moving the trip-cost formula (`base + per_km × distance`) out of `services.py:49-53` and
   `presentation.py:66` into `engine.py`. TASKS.md lists this as "Move the trip-cost formula into
@@ -133,18 +133,14 @@ So everything is green today, but the suite has a time-of-day failure (N1) that 
 - A new `rankings.py` router: `GET /v1/markets`, `GET /v1/commodities`, `POST /v1/rankings`.
 - The DECISIONS.md entry for the **staleness threshold** used by the API (see item 10).
 
-**Status (2026-11-19, afternoon): all four are done and in PR #1**
-(https://github.com/Yashvardhan-Chaudhry/MandiWise/pull/1, CI green, waiting on one approval).
-Approving it on GitHub is the fastest way to unblock yourself. Until it merges, **branch from it,
-not from `main`**:
+**Status (2026-11-20): all four are done and merged into `main`** (PR #1). The React client
+(PR #4) and the report (PR #5) are merged too, and `main` is now the only branch. Start from it:
 
 ```
 git fetch origin
-git switch -c fix/backend-defects origin/engine/net-realisation-rankings
+git switch main && git pull
+git switch -c fix/backend-defects
 ```
-
-Your branch then rebases cleanly onto `main` once PR #1 lands. Do not branch from the old `main`:
-you would conflict in `engine.py`, `services.py`, `presentation.py` and `api.py`.
 
 What changed in those files (so your line numbers stay right):
 - `engine.py`: new `trip_cost_paise`, `net_realisation`, `rank_offers`. `pool_quote` now also
@@ -534,9 +530,9 @@ marked **NEW** were found on 2026-11-19 and are not in TASKS.md yet. Add them wh
 
 1. **Now, no conflict risk:** read this brief, run section 2's commands, claim your items in
    `docs/TASKS.md` (put your name next to them and add the NEW items).
-2. **Optionally before Yashvardhan's merge, own branch, with his OK:** items 6, 7, 8 and 9 in
+2. **Small, self-contained first PR:** items 6, 7, 8 and 9 in
    `src/mandiwise/` and `tests/test_recommendation.py`. Agree the worked-example numbers (item 9) with him.
-3. **On a branch from `origin/engine/net-realisation-rankings` (or fresh `main` once PR #1 merges):**
+3. **On a branch from fresh `main`:**
    a. N1 (test clock): small, and it protects every later PR.
    b. Item 1 (coordinator permission): migration plus DECISIONS. Do it before 2 and 3 because it
       changes who can do what, and their tests depend on that.

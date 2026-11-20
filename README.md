@@ -4,7 +4,7 @@
 
 A decision tool for farmers choosing where to sell. It ranks nearby mandis by **net realisation** — the money left after commission, handling and transport — and finds opportunities to share transport costs with neighbouring farmers.
 
-> **Status:** early development. Architecture is provisional (`docs/ARCHITECTURE.md`, v0.1). Nothing here is settled.
+> **Status (2026-11-20):** working prototype, run locally. It has a validated data pipeline, an exact engine, a net-realisation ranking API, a pooling backend and a React client, all on `main`. Rates are still unsourced placeholders, so rankings are illustrative. The architecture is provisional (`docs/ARCHITECTURE.md`, v0.1).
 
 ---
 
@@ -126,7 +126,10 @@ The feed provides state, district, market, commodity, variety, grade, date, and 
 | `docs/DOMAIN.md` | How mandis, commission agents and the deduction stack actually work |
 | `docs/DECISIONS.md` | Every decision and why — append-only |
 | `docs/IMPROVEMENTS.md` | Backlog |
-| `research/` | Data analysis supporting the design |
+| `research/` | Data analysis supporting the design (`findings.md`, `engine_benchmark.md`, `report_figures.py`) |
+| `docs/TASKS.md` | What is open and who has claimed it |
+| `docs/DEMO_BRIEF.md`, `docs/DEMO_RUNBOOK.md` | The shared presentation story and the demo script |
+| `report/` | The IEEE report (LaTeX) and the data behind its charts |
 
 ---
 
@@ -168,9 +171,10 @@ repository root. The first launch installs dependencies; keep its terminal open.
 Covers the whole repository, not just the transport backend.
 
 ```text
-src/mandiwise/             Recommendation engine: net realisation ranking and
-                           whole-vehicle transport cost
-                           (models.py, recommendation.py, transport.py)
+frontend/                  React + Vite client: mandi ranking, price explorer,
+                           transport calculator, pooling (see frontend/README.md)
+src/mandiwise/             First recommendation engine (superseded for net
+                           realisation by backend/.../engine.py; kept for demo.py)
 tests/                     Tests for src/mandiwise/
 demo.py                    Runs the 40-quintal comparison above from
                            data/vehicle_rates.json and data/example_market_prices.csv
@@ -178,14 +182,17 @@ CORE_ENGINE_README.md      Engine scope, quick start and what it does not yet do
 mandi_pull.py              data.gov.in AGMARKNET puller — daily live feed
 ceda_pull.py               CEDA puller — historical prices and arrival volumes
 backend/
-  src/mandiwise_transport/ Transport engine, API, database and portal
+  src/mandiwise_transport/ Canonical engine (packing, split, net realisation),
+                           API incl. /v1/rankings, database and portal
     web/templates/          Calculator and pooling HTML
     web/static/             Readable CSS and JavaScript
   tests/                    Engine, API, portal and migration tests
   migrations/               Versioned database schema changes
   scripts/                  API demo client and dataset study
   README.md                 Developer setup
-docs/                      Architecture, decisions, tasks, domain notes
+docs/                      Architecture, decisions, tasks, domain notes, demo brief
+  handoff/                 Briefs for teammates (backend fixes, frontend)
+  frontend/                React client implementation notes
   transport/               Transport demo, handoff and implementation guides
   MILESTONE_2_3_IMPLEMENTATION.md  Mid-semester engine implementation evidence
   TRANSPORT_DATA_REVIEW.md  Dataset review (counts are of an earlier snapshot)
@@ -194,8 +201,11 @@ data/                      Two kinds of file, not one:
                            - vehicle_rates.json, the single placeholder rate card,
                              and example_market_prices.csv, the demo fixture —
                              configuration and fixtures, not price data
-research/                  findings.md (data validation) and commodity aliases
-START_MANDIWISE.cmd        Windows one-click launcher for the transport portal
+research/                  findings.md (data validation), commodity aliases,
+                           engine benchmark, report_figures.py
+report/                    IEEE report source, chart data and screenshots
+START_MANDIWISE.cmd        Windows launcher for the backend (port 8001)
+START_FRONTEND.cmd         Windows launcher for the React client (port 5173)
 ```
 
 Accounts and messages stay in a local, ignored database; **never commit databases,

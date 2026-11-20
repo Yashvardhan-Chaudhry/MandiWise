@@ -3,6 +3,8 @@
 **Version:** v0.1 — PROVISIONAL
 **Status:** Written before implementation. Expect this to change. Nothing here is settled until it has a corresponding entry in `DECISIONS.md`.
 
+> **Implementation pointers (2026-11-20).** The engine of §3.3 is `backend/src/mandiwise_transport/engine.py`: `net_realisation`, `optimise` (vehicle packing) and `allocate_cost` (pool split). The API of §3.2 is the same package (`api.py`, `rankings.py`). The client of §3.1 is `frontend/` (React + Vite), not yet deployed. The ingestion of §4 is partial: the pullers write snapshots by hand, and there is no scheduled job or `price_record` table yet. Status per task is in `docs/TASKS.md`.
+
 ---
 
 ## 1. What the system does

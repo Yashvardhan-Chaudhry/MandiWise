@@ -76,7 +76,7 @@ cookie also needs the header and a matching Origin.
 
 ## 4. New endpoints: build against this contract, mock until merged
 
-Built and tested on branch `engine/net-realisation-rankings` — **PR #1**. Until it merges, run the backend from that branch (`git worktree add ../mw-engine engine/net-realisation-rankings`) or use mocks. The shapes below match the code (`backend/tests/test_rankings.py` pins them).
+Merged into `main` in **PR #1** (2026-11-19). The shapes below match the code (`backend/tests/test_rankings.py` pins them).
 Money is a **decimal string in rupees**, quantities are in **quintals**, and dates are **ISO `YYYY-MM-DD`**.
 **Field names could still change in PR review.** Keep all API types and fetchers in one module
 (e.g. `src/api.ts`) so a rename is one edit. Keep mock fixtures beside it.
